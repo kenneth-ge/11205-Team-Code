@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import edgemont.lib.Grabber;
+import edgemont.lib.Slide;
 
 @TeleOp(name="Full Final TeleOp 2-9")
 
@@ -16,11 +17,13 @@ public class IntakeTester extends LinearOpMode {
     DcMotor wheelRB;
     DcMotor wheelLB;
     Grabber grabber;
+    Slide slide;
 
     @Override
     
     public void runOpMode() throws InterruptedException {
         grabber = new Grabber(hardwareMap);
+        slide = new Slide(hardwareMap);
 
         intake = hardwareMap.dcMotor.get("intake");
         intake.setDirection(DcMotor.Direction.FORWARD);
@@ -73,6 +76,14 @@ public class IntakeTester extends LinearOpMode {
                 intake.setPower(-0.5);
             }else{
                 intake.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+            }
+
+            if(gamepad1.dpad_up){
+                slide.up();
+            }else if(gamepad1.dpad_down) {
+                slide.down();
+            }else{
+                slide.setPower(gamepad2.left_stick_y);
             }
             
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
@@ -134,6 +145,8 @@ public class IntakeTester extends LinearOpMode {
         telemetry.addData("Y", "Toggle intake");
         telemetry.addData("X", "Toggle slow mode");
         telemetry.addData("A", "Toggle grabber");
+        telemetry.addData("Dpad up and down", "Move slide up and down");
+        telemetry.addData("Controller 2 left joystick", "Move slide up and down");
         telemetry.update();
     }
 }
