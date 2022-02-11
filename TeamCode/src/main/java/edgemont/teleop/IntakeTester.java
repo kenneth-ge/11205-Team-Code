@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import edgemont.lib.Grabber;
 import edgemont.lib.Slide;
 
-@TeleOp(name="Full Final TeleOp 2-9")
+@TeleOp(name="Full Final TeleOp 2-11")
 
 public class IntakeTester extends LinearOpMode {
 
@@ -20,7 +20,6 @@ public class IntakeTester extends LinearOpMode {
     Slide slide;
 
     @Override
-    
     public void runOpMode() throws InterruptedException {
         grabber = new Grabber(hardwareMap);
         slide = new Slide(hardwareMap);
@@ -58,6 +57,8 @@ public class IntakeTester extends LinearOpMode {
         
         while(opModeIsActive()){
             telemetry.addData("Time", (System.currentTimeMillis() - startTime) / 1000);
+            telemetry.addData("pos slide", slide.slidePos());
+            telemetry.addData("pos reel", slide.reelPos());
             printControls();
 
             if(gamepad1.a && !aWasDown){
@@ -84,6 +85,10 @@ public class IntakeTester extends LinearOpMode {
                 slide.down();
             }else{
                 slide.setPower(gamepad2.left_stick_y);
+
+                if(Math.abs(gamepad2.left_stick_y) < 0.05){
+                    slide.stop();
+                }
             }
             
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
@@ -146,7 +151,7 @@ public class IntakeTester extends LinearOpMode {
         telemetry.addData("X", "Toggle slow mode");
         telemetry.addData("A", "Toggle grabber");
         telemetry.addData("Dpad up and down", "Move slide up and down");
-        telemetry.addData("Controller 2 left joystick", "Move slide up and down");
+        telemetry.addData("Controller 2 left joystick", "Up moves slide up");
         telemetry.update();
     }
 }

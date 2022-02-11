@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "Autonomous Driving")
-public class AutonomousDriving extends LinearOpMode {
+@Autonomous(name = "Blue With Camera")
+public class BlueWithCamera extends LinearOpMode {
   Drive drive;
 
   Camera camera;
@@ -27,11 +27,10 @@ public class AutonomousDriving extends LinearOpMode {
     this.motorpwr = -1D;
     this.motor.setPower(this.motorpwr);
 
-    //int region = scan(camera);
+    int region = scan(camera);
 
     //telemetry.addData("reg", region);
     //telemetry.update();
-
 
     this.drive.drive(-1.5D);
 
