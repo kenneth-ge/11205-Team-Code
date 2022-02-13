@@ -22,6 +22,10 @@ public class Intake {
         intake.setPower(-POWER);
     }
 
+    public void outSlow(){
+        intake.setPower(-POWER / 2.75);
+    }
+
     public void stop(){
         intake.setPower(0);
     }

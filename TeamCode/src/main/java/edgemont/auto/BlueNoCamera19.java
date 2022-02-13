@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "Blue No Camera")
-public class BlueNoCamera extends LinearOpMode {
+@Autonomous(name = "Blue No Camera Short Storage 19pts")
+public class BlueNoCamera19 extends LinearOpMode {
   Drive drive;
 
   Camera camera;
@@ -37,32 +37,16 @@ public class BlueNoCamera extends LinearOpMode {
 
     Thread.sleep(2500);
 
-    this.drive.drive(0.5);
-    //this.drive.strafe(0.3);
-    telemetry.addData("start angle", this.drive.globalAngle);
-    telemetry.update();
-    this.drive.turnToZero();
+    this.motor.setPower(0);
 
-    //this.drive.strafe(1.5);
+    drive.strafe(0.5, 2000);
     this.drive.turn(-0.25);
-    this.drive.drive(0.75);
-    this.drive.turn(-0.25);
-    this.drive.drive(0.75);
-    this.drive.turn(0.25);
+    this.drive.drive(1.25);
     intake.out();
-    Thread.sleep(1000);
-    intake.stop();
+    Thread.sleep(2500);
+    intake.outSlow();
 
-    this.drive.turn(0.25);
-
-    //this.drive.strafe(-1.5);
-
-    this.drive.drive(5);
-    this.drive.turn(0.25);
-    this.drive.drive(0.75);
-    this.drive.turn(-0.25);
-    this.drive.strafe(-0.6);
-    this.drive.drive(4);
+    drive.drive(0.5);
   }
 
   public void spinCarousel(CRServo servo, int time, double servopwr) throws InterruptedException {

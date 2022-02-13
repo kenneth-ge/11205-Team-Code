@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "Blue With Camera")
-public class BlueWithCamera extends LinearOpMode {
+@Autonomous(name = "Blue No Camera Long Depot 26pts")
+public class BlueNoCamera26 extends LinearOpMode {
   Drive drive;
 
   Camera camera;
@@ -27,14 +27,11 @@ public class BlueWithCamera extends LinearOpMode {
     this.motorpwr = -1D;
     this.motor.setPower(this.motorpwr);
 
-    int region = scan(camera);
-
-    //telemetry.addData("reg", region);
-    //telemetry.update();
-
     this.drive.drive(-1.5D);
 
     Thread.sleep(2500);
+
+    this.motor.setPower(0);
 
     this.drive.drive(0.5);
     //this.drive.strafe(0.3);
@@ -49,7 +46,7 @@ public class BlueWithCamera extends LinearOpMode {
     this.drive.drive(0.75);
     this.drive.turn(0.25);
     intake.out();
-    Thread.sleep(1000);
+    Thread.sleep(2500);
     intake.stop();
 
     this.drive.turn(0.25);
@@ -60,7 +57,7 @@ public class BlueWithCamera extends LinearOpMode {
     this.drive.turn(0.25);
     this.drive.drive(0.75);
     this.drive.turn(-0.25);
-    this.drive.strafeLeft(-0.6, 3000);
+    this.drive.strafe(-0.6, 3000);
     this.drive.drive(4);
   }
 
@@ -99,9 +96,9 @@ public class BlueWithCamera extends LinearOpMode {
     telemetry.addData("right", right);
 
     if (left > middle && left > right)
-      return 3;
+      return 1;
     if (middle > left && middle > right)
       return 2;
-    return 1;
+    return 3;
   }
 }

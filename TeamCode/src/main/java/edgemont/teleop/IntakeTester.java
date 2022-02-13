@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import edgemont.lib.Carousel;
 import edgemont.lib.Grabber;
 import edgemont.lib.Slide;
 
@@ -18,11 +19,13 @@ public class IntakeTester extends LinearOpMode {
     DcMotor wheelLB;
     Grabber grabber;
     Slide slide;
+    Carousel carousel;
 
     @Override
     public void runOpMode() throws InterruptedException {
         grabber = new Grabber(hardwareMap);
-        slide = new Slide(hardwareMap);
+        slide = new Slide(hardwareMap, grabber);
+        carousel = new Carousel(hardwareMap, this);
 
         intake = hardwareMap.dcMotor.get("intake");
         intake.setDirection(DcMotor.Direction.FORWARD);
@@ -46,12 +49,16 @@ public class IntakeTester extends LinearOpMode {
         printControls();
         
         waitForStart();
+
+        carousel.threadStart();
         
         boolean yWasPressed = false;
         boolean toggleIntake = false;
         boolean xWasPressed = false;
         boolean toggleSlow = false;
         boolean aWasDown = false;
+        boolean a2WasDown = false;
+        boolean b2WasDown = false;
 
         long startTime = System.currentTimeMillis();
         
@@ -66,15 +73,15 @@ public class IntakeTester extends LinearOpMode {
             }
             aWasDown = gamepad1.a;
 
-            boolean yReleased = !gamepad1.y && yWasPressed;
-            yWasPressed = gamepad1.y;
+            boolean yReleased = !(gamepad1.y || gamepad2.y) && yWasPressed;
+            yWasPressed = (gamepad1.y || gamepad2.y);
             
             if(yReleased){
                 toggleIntake = !toggleIntake;
             }
             
             if(toggleIntake){
-                intake.setPower(-0.5);
+                intake.setPower(-1);
             }else{
                 intake.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
             }
@@ -90,6 +97,15 @@ public class IntakeTester extends LinearOpMode {
                     slide.stop();
                 }
             }
+
+            if(gamepad2.a && !a2WasDown){
+                carousel.leftDuck();
+            }else if(gamepad2.b && !b2WasDown){
+                carousel.rightDuck();
+            }
+
+            a2WasDown = gamepad2.a;
+            b2WasDown = gamepad2.b;
             
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = -Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
@@ -147,11 +163,13 @@ public class IntakeTester extends LinearOpMode {
         telemetry.addData("Left and right joysticks", "Mecanum driving");
         telemetry.addData("Left trigger", "Take object in with intake");
         telemetry.addData("Right trigger", "Spit object out with intake");
-        telemetry.addData("Y", "Toggle intake");
+        telemetry.addData("Y on C1 & C2", "Toggle intake");
         telemetry.addData("X", "Toggle slow mode");
         telemetry.addData("A", "Toggle grabber");
         telemetry.addData("Dpad up and down", "Move slide up and down");
         telemetry.addData("Controller 2 left joystick", "Up moves slide up");
+        telemetry.addData("Controller 2 A button", "blue duck");
+        telemetry.addData("Controller 2 B button", "Red duck?");
         telemetry.update();
     }
 }

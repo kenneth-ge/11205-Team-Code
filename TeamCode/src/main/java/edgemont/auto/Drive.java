@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Util;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -63,7 +64,8 @@ public class Drive {
        globalAngle = 0;
     }
 
-    public void turnToZero() throws InterruptedException {
+    public void turnToAngle(double toTurn) throws InterruptedException {
+        double angleTurn = toTurn * 360.;
         double angle = getAngle();
 
         globalAngle = globalAngle % 360;
@@ -73,9 +75,37 @@ public class Drive {
         }
 
         telemetry.addData("angle", globalAngle);
-        telemetry.addData("rotations", -angle / 360.);
+        telemetry.addData("rotations", (angleTurn-globalAngle) / 360.);
         telemetry.update();
-        turn(-angle / 360.);
+
+        double rotOneWay = (angleTurn-globalAngle) / 360.;
+        double rotOtherWay = rotOneWay - 1;
+
+        if(rotOneWay < 0){
+            rotOtherWay = rotOneWay + 1;
+        }
+
+        if(Math.abs(rotOneWay) <= Math.abs(rotOtherWay)){
+            turn(rotOneWay);
+        }else{
+            turn(rotOtherWay);
+        }
+    }
+
+    public void turnToZero() throws InterruptedException {
+        turnToAngle(0);
+        /*double angle = getAngle();
+
+        while(globalAngle < 0){
+            globalAngle += 360;
+        }
+
+        globalAngle = globalAngle % 360;
+
+        telemetry.addData("angle", globalAngle);
+        telemetry.addData("rotations", -globalAngle / 360.);
+        telemetry.update();
+        turn(-globalAngle / 360.);*/
     }
     
     public double getAngle(){
@@ -99,7 +129,7 @@ public class Drive {
     final double TURN_SPEED     = 0.4;
     final double DRIVE_SPEED    = 0.4;
     
-    //turns left
+    /** @param rotation - turns left by this number of full rotations */
     public void turn(double rotation) throws InterruptedException{
         wheelLF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheelLB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -149,10 +179,126 @@ public class Drive {
             }
         }
     }
-    
+
+    void strafeRight(double feet, long maxTime) throws InterruptedException {
+        final int target = (int) (feet*(595));
+        final int startPosition = wheelLF.getCurrentPosition();
+
+        wheelLF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelLB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelRF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelRB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //double initialAngle = getAngle();
+        double powers = -0.25;
+
+        wheelLB.setPower(0.25);
+        wheelRF.setPower(0.25);
+        wheelLF.setPower(-0.25);
+        wheelRB.setPower(-0.25);
+
+        long start = System.currentTimeMillis();
+
+        while (true){
+            if(System.currentTimeMillis() - start >= maxTime){
+                break;
+            }
+
+            Thread.sleep(10);
+            int average = wheelLF.getCurrentPosition();
+
+            int positionsLeft = Math.abs(target - Math.abs(average - startPosition));
+
+            if (wheelLF.getCurrentPosition() < startPosition - target){
+                break;
+            }
+
+            if (positionsLeft < 250){
+                double proportionLeft = 1 - positionsLeft / 250.0;
+                double percentPower = Math.exp(proportionLeft * -2);
+                powers = -0.25 * percentPower;
+            }
+            else{
+                powers = -0.25;
+            }
+
+            wheelLB.setPower(-powers);
+            wheelRF.setPower(-powers);
+            wheelLF.setPower(powers);
+            wheelRB.setPower(powers);
+        }
+
+        wheelLB.setPower(0);
+        wheelRF.setPower(0);
+        wheelLF.setPower(0);
+        wheelRB.setPower(0);
+    }
+
+    /** Values should still be negative */
+    void strafeLeft(double feet, long maxTime) throws InterruptedException {
+        final int target = (int) (-feet*(595));
+        final int startPosition = wheelLF.getCurrentPosition();
+
+        wheelLF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelLB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelRF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelRB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        double powers = 0.25;
+
+        wheelLB.setPower(-0.25);
+        wheelRF.setPower(-0.25);
+        wheelLF.setPower(0.25);
+        wheelRB.setPower(0.25);
+
+        long start = System.currentTimeMillis();
+        while (true){
+            if(System.currentTimeMillis() - start >= maxTime){
+                break;
+            }
+
+            Thread.sleep(10);
+
+            int average = wheelLF.getCurrentPosition();
+            int positionsLeft = Math.abs(Math.abs(target) - Math.abs(average - startPosition));
+
+            if (average >= target+startPosition){
+                break;
+            }
+
+            if (positionsLeft < 250){
+                double proportionLeft = 1.0 - positionsLeft / 250.0;
+                double percentPower = Math.exp(proportionLeft * -2);
+                powers = 0.25 * percentPower;
+            }
+            else{
+                powers = 0.25;
+            }
+
+            wheelLB.setPower(-powers);
+            wheelRF.setPower(-powers);
+            wheelLF.setPower(powers);
+            wheelRB.setPower(powers);
+        }
+
+        wheelLB.setPower(0);
+        wheelRF.setPower(0);
+        wheelLF.setPower(0);
+        wheelRB.setPower(0);
+    }
+
     //Right by default
     //Weight distribution issue may be solved by placing weights on the other side of the robot
-    public void strafe(double feet) throws InterruptedException {
+    public void strafe(double feet, long maxTime) throws InterruptedException {
+        if(feet > 0){
+            strafeRight(feet, maxTime);
+            return;
+        }else{
+            strafeLeft(feet, maxTime);
+            if(IfUtil.yes())
+                return;
+        }
+
         int positionLF = Math.abs(wheelLF.getCurrentPosition());
     
         final int target = (int) (feet*(595));
