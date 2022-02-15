@@ -5,11 +5,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Slide {
 
-    final double RATIO = (7./4.) * 0.6;
+    final double RATIO = (7./4.) * 0.75;
     final double POWER = 0.25;
-    final int MAX_SLIDE = 0, MAX_REEL = 0, MIN_SLIDE = -3595, MIN_REEL = -1000;
+    final int MAX_SLIDE = 0, MAX_REEL = 0, MIN_SLIDE = -3500, MIN_REEL = -1000;
     final double SLIDE_OVER_REEL = ((double) MIN_SLIDE) / ((double) MIN_REEL);
-    DcMotor slide, reel;
+    public DcMotor slide, reel;
     Grabber grabber;
 
     public Slide(HardwareMap hardwareMap, Grabber grabber){
@@ -30,26 +30,32 @@ public class Slide {
         setPower(-POWER);
     }
 
-    public void setPower(double power){
-        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        reel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public void setPower(final double power){
+        slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        reel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         if(power > 0){
-            if(slide.getCurrentPosition() > MAX_SLIDE || reel.getCurrentPosition() > MAX_REEL){
-                return;
+            if(slide.getCurrentPosition() <= MAX_SLIDE){
+                slide.setPower(power);//7 over 4
+            }else{
+                slide.setPower(0);
+            }
+
+            if(reel.getCurrentPosition() <= MAX_REEL) {
+                reel.setPower(power * RATIO);//7 over 4
+            }else{
+                reel.setPower(0);
             }
         }else{
-            /*if(slide.getCurrentPosition() < MIN_SLIDE + 1000 || reel.getCurrentPosition() < MIN_REEL + 300){
-                grabber.grabNotTight();
-            }*/
-            if(slide.getCurrentPosition() < MIN_SLIDE || reel.getCurrentPosition() < MIN_REEL){
-                return;
+            if(slide.getCurrentPosition() >= MIN_SLIDE){
+                slide.setPower(power);//7 over 4
+                reel.setPower(power * RATIO);//7 over 4
+            }else{
+                slide.setPower(0);
+                reel.setPower(0);
             }
-        }
 
-        //slide.setTargetPosition(power * slide);
-        slide.setPower(power);
-        reel.setPower(power * RATIO);//7 over 4
+        }
     }
 
     public void stop(){

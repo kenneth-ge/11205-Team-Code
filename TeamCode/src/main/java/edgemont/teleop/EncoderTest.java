@@ -23,18 +23,6 @@ public class EncoderTest extends LinearOpMode {
         wheelRF = hardwareMap.get(DcMotor.class, "wheelRF");
         wheelRB = hardwareMap.get(DcMotor.class, "wheelRB");
 
-        for(Field f: this.getClass().getFields()){
-            if(f.getType().equals(DcMotor.class)){
-                try {
-                    DcMotor dc = (DcMotor) f.get(this);
-
-                    telemetry.addData(f.getName(), dc.getCurrentPosition());
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
         waitForStart();
 
         while(opModeIsActive()){

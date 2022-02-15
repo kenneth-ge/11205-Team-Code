@@ -25,9 +25,11 @@ public class RedNoCamera19 extends LinearOpMode {
 
         drive.drive(0.2);
 
-        drive.strafeLeft(-1, 3000);
+        drive.strafeLeft(-0.8, 3000);
         drive.turnToZero();
-        drive.strafeLeft(-0.85, 3000);
+        drive.strafeLeft(-0.80, 3000);
+
+        drive.drive(-0.08);
 
         this.motor.setPower(this.motorpwr);
         Thread.sleep(3000);

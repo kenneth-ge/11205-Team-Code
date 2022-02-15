@@ -23,6 +23,11 @@ public class Grabber {
         grabber.setPosition(0.2);
     }
 
+    public void looseGrab(){
+        grabbing = true;
+        grabber.setPosition(0.14);
+    }
+
     public void toggle(){
         if(grabbing)
             release();

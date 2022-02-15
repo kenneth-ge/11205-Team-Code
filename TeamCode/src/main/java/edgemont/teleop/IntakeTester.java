@@ -59,9 +59,15 @@ public class IntakeTester extends LinearOpMode {
         boolean aWasDown = false;
         boolean a2WasDown = false;
         boolean b2WasDown = false;
+        boolean x2WasDown = false;
+        boolean startWasDown = false;
+        boolean backWasDown = false;
+
+        boolean toggleRandom = false;
 
         long startTime = System.currentTimeMillis();
-        
+
+        //TODO: Add toggle "Random" mode in controller B
         while(opModeIsActive()){
             telemetry.addData("Time", (System.currentTimeMillis() - startTime) / 1000);
             telemetry.addData("pos slide", slide.slidePos());
@@ -73,6 +79,16 @@ public class IntakeTester extends LinearOpMode {
             }
             aWasDown = gamepad1.a;
 
+            if(gamepad2.x && !x2WasDown){
+                grabber.toggle();
+            }
+            x2WasDown = gamepad2.x;
+
+            if(gamepad2.back && !backWasDown){
+                grabber.looseGrab();
+            }
+            backWasDown = gamepad2.back;
+
             boolean yReleased = !(gamepad1.y || gamepad2.y) && yWasPressed;
             yWasPressed = (gamepad1.y || gamepad2.y);
             
@@ -83,18 +99,33 @@ public class IntakeTester extends LinearOpMode {
             if(toggleIntake){
                 intake.setPower(-1);
             }else{
-                intake.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+                double power = (gamepad1.right_trigger - gamepad1.left_trigger) + (gamepad2.right_trigger - gamepad2.left_trigger);
+
+                if(power > 0)
+                    intake.setPower(power * 0.7);
+                else
+                    intake.setPower(power);
             }
 
-            if(gamepad1.dpad_up){
-                slide.up();
-            }else if(gamepad1.dpad_down) {
-                slide.down();
-            }else{
-                slide.setPower(gamepad2.left_stick_y);
+            if(!gamepad2.start && startWasDown){
+                toggleRandom = !toggleRandom;
+            }
+            startWasDown = gamepad2.start;
 
-                if(Math.abs(gamepad2.left_stick_y) < 0.05){
-                    slide.stop();
+            if(toggleRandom){
+                slide.slide.setPower(gamepad2.left_stick_y);
+                slide.reel.setPower(gamepad2.right_stick_y);
+            }else{
+                if (gamepad1.dpad_up) {
+                    slide.up();
+                } else if (gamepad1.dpad_down) {
+                    slide.down();
+                } else {
+                    slide.setPower(gamepad2.left_stick_y);
+
+                    if (Math.abs(gamepad2.left_stick_y) < 0.05) {
+                        slide.stop();
+                    }
                 }
             }
 
@@ -130,37 +161,19 @@ public class IntakeTester extends LinearOpMode {
                 v4 = v4 * 0.6;
             }
             
-            /*telemetry.addData("Angle", Math.toDegrees(robotAngle));
-            telemetry.addData("wheelLF", v1);
-            telemetry.addData("wheelRF", v2);
-            telemetry.addData("wheelLB", v3);
-            telemetry.addData("wheelRB", v4);
-            telemetry.update();*/
-            
             wheelLF.setPower(v1);
             wheelRF.setPower(v2);
             wheelLB.setPower(v3);
             wheelRB.setPower(v4);
-            
-            /*double r = Math.hypot(-gamepad1.left_stick_y, gamepad1.left_stick_x);
-            double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-            double rightX = 0.4 * gamepad1.right_stick_x;
-            final double v1 = r * Math.cos(robotAngle) + rightX;
-            final double v2 = r * Math.sin(robotAngle) - rightX;
-            final double v3 = r * Math.sin(robotAngle) + rightX;
-            final double v4 = r * Math.cos(robotAngle) - rightX;
-            
-            wheelLF.setPower(v1);
-            wheelRF.setPower(-v2);
-            wheelLB.setPower(v3);
-            wheelRB.setPower(-v4);*/
         }
         //Cleanup
     }
 
     public void printControls(){
         telemetry.addData("Controls", "");
-        telemetry.addData("Left and right joysticks", "Mecanum driving");
+        telemetry.addData("C2 Start (upon release)", "Switch to \"Random\" Mode");
+        telemetry.addData("C2 Back", "Loose close, for moving the slide down");
+        telemetry.addData("Left and right joysticks", "C1 Mecanum driving, C2 rail");
         telemetry.addData("Left trigger", "Take object in with intake");
         telemetry.addData("Right trigger", "Spit object out with intake");
         telemetry.addData("Y on C1 & C2", "Toggle intake");
@@ -168,8 +181,8 @@ public class IntakeTester extends LinearOpMode {
         telemetry.addData("A", "Toggle grabber");
         telemetry.addData("Dpad up and down", "Move slide up and down");
         telemetry.addData("Controller 2 left joystick", "Up moves slide up");
-        telemetry.addData("Controller 2 A button", "blue duck");
-        telemetry.addData("Controller 2 B button", "Red duck?");
+        telemetry.addData("Controller 2 A button", "Red duck");
+        telemetry.addData("Controller 2 B button", "Blue duck");
         telemetry.update();
     }
 }

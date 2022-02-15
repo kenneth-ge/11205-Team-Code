@@ -19,7 +19,7 @@ public class Intake {
     }
 
     public void out(){
-        intake.setPower(-POWER);
+        intake.setPower(-POWER * 0.7);
     }
 
     public void outSlow(){

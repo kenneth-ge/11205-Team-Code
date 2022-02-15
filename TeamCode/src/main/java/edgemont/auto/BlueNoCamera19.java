@@ -24,7 +24,7 @@ public class BlueNoCamera19 extends LinearOpMode {
 
     waitForStart(); //where the program starts
 
-    this.motorpwr = -1D;
+    this.motorpwr = 1D;
     this.motor.setPower(this.motorpwr);
 
     //int region = scan(camera);
@@ -32,21 +32,23 @@ public class BlueNoCamera19 extends LinearOpMode {
     //telemetry.addData("reg", region);
     //telemetry.update();
 
+    drive.strafe(0.5, 5000);
 
-    this.drive.drive(-1.5D);
+    this.drive.drive(-1.75);
 
     Thread.sleep(2500);
 
     this.motor.setPower(0);
 
-    drive.strafe(0.5, 2000);
     this.drive.turn(-0.25);
     this.drive.drive(1.25);
     intake.out();
     Thread.sleep(2500);
     intake.outSlow();
 
-    drive.drive(0.5);
+    drive.turn(0.25);
+    drive.strafe(0.45, 3000);
+    drive.turnToZero();
   }
 
   public void spinCarousel(CRServo servo, int time, double servopwr) throws InterruptedException {
