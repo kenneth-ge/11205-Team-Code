@@ -38,7 +38,7 @@ public class Carousel implements Runnable {
             if(left) {
                 carousel.setPower(-1);
                 try {
-                    Thread.sleep(2750);
+                    Thread.sleep(2500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -49,7 +49,7 @@ public class Carousel implements Runnable {
             if(right){
                 carousel.setPower(1);
                 try {
-                    Thread.sleep(2750);
+                    Thread.sleep(2500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

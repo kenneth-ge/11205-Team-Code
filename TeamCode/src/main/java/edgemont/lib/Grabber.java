@@ -5,17 +5,17 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Grabber {
 
-    boolean grabbing = false;
+    public boolean grabbing = false;
     Servo grabber;
 
     public Grabber(HardwareMap hardwareMap){
         grabber = hardwareMap.get(Servo.class, "grabber");
-        grabber.setPosition(0);
+        grabber.setPosition(0.02);
     }
 
     public void release(){
         grabbing = false;
-        grabber.setPosition(0);
+        grabber.setPosition(0.02);
     }
 
     public void grab(){
@@ -25,7 +25,14 @@ public class Grabber {
 
     public void looseGrab(){
         grabbing = true;
-        grabber.setPosition(0.14);
+        grabber.setPosition(0.12);
+    }
+
+    public void toggleLooseGrab(){
+        if(!grabbing)
+            looseGrab();
+        else
+            release();
     }
 
     public void toggle(){

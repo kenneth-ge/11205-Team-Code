@@ -25,9 +25,9 @@ public class RedNoCamera26 extends LinearOpMode {
 
     drive.drive(0.2);
 
-    drive.strafeLeft(-1, 3000);
+    drive.strafe(-1, 3000);
     drive.turnToZero();
-    drive.strafeLeft(-0.85, 3000);
+    drive.strafe(-0.85, 3000);
 
     drive.drive(-0.08);
 

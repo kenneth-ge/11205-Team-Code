@@ -60,7 +60,7 @@ public class BlueWithCamera extends LinearOpMode {
     this.drive.turn(0.25);
     this.drive.drive(0.75);
     this.drive.turn(-0.25);
-    this.drive.strafeLeft(-0.6, 3000);
+    this.drive.strafe(-0.6, 3000);
     this.drive.drive(4);
   }
 

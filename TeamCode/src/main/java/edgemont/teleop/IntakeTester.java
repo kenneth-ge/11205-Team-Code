@@ -1,8 +1,12 @@
 package edgemont.teleop;
 
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import edgemont.lib.Carousel;
 import edgemont.lib.Grabber;
@@ -20,9 +24,11 @@ public class IntakeTester extends LinearOpMode {
     Grabber grabber;
     Slide slide;
     Carousel carousel;
+    RevColorSensorV3 color;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        color = hardwareMap.get(RevColorSensorV3.class, "color");
         grabber = new Grabber(hardwareMap);
         slide = new Slide(hardwareMap, grabber);
         carousel = new Carousel(hardwareMap, this);
@@ -53,6 +59,7 @@ public class IntakeTester extends LinearOpMode {
         carousel.threadStart();
         
         boolean yWasPressed = false;
+        boolean leftBumperWasPressed = false;
         boolean toggleIntake = false;
         boolean xWasPressed = false;
         boolean toggleSlow = false;
@@ -60,15 +67,41 @@ public class IntakeTester extends LinearOpMode {
         boolean a2WasDown = false;
         boolean b2WasDown = false;
         boolean x2WasDown = false;
-        boolean startWasDown = false;
-        boolean backWasDown = false;
+        boolean upWasDown = false;
+        boolean y2WasDown = false;
+
+        boolean wasRumbling = false;
+        boolean shouldRumble = false;
+
+        boolean consideredGrabbingAfterRumble = false;
 
         boolean toggleRandom = false;
 
         long startTime = System.currentTimeMillis();
 
+        long rumbleTime = System.currentTimeMillis();
+
         //TODO: Add toggle "Random" mode in controller B
         while(opModeIsActive()){
+            shouldRumble = /*color.getDistance(DistanceUnit.CM) < 4 && */(color.green() > 800 && color.red() > 800);
+
+            if(!wasRumbling && shouldRumble){
+                gamepad2.rumble(500);
+                gamepad1.rumble(500);
+                rumbleTime = System.currentTimeMillis();
+                consideredGrabbingAfterRumble = false;
+                wasRumbling = true;
+            }
+
+            if(!shouldRumble){
+                wasRumbling = false;
+            }
+
+            if(System.currentTimeMillis() > rumbleTime + 300 && !grabber.grabbing && !consideredGrabbingAfterRumble){
+                //grabber.grab();
+                consideredGrabbingAfterRumble = true;
+            }
+
             telemetry.addData("Time", (System.currentTimeMillis() - startTime) / 1000);
             telemetry.addData("pos slide", slide.slidePos());
             telemetry.addData("pos reel", slide.reelPos());
@@ -79,18 +112,16 @@ public class IntakeTester extends LinearOpMode {
             }
             aWasDown = gamepad1.a;
 
-            if(gamepad2.x && !x2WasDown){
-                grabber.toggle();
+            if(gamepad2.y && !y2WasDown){
+                if(!grabber.grabbing)
+                    grabber.looseGrab();
+                else
+                    grabber.release();
             }
-            x2WasDown = gamepad2.x;
+            y2WasDown = gamepad2.y;
 
-            if(gamepad2.back && !backWasDown){
-                grabber.looseGrab();
-            }
-            backWasDown = gamepad2.back;
-
-            boolean yReleased = !(gamepad1.y || gamepad2.y) && yWasPressed;
-            yWasPressed = (gamepad1.y || gamepad2.y);
+            boolean yReleased = (!gamepad1.y && yWasPressed) || (!gamepad2.left_bumper && leftBumperWasPressed);
+            yWasPressed = gamepad1.y; leftBumperWasPressed = gamepad2.left_bumper;
             
             if(yReleased){
                 toggleIntake = !toggleIntake;
@@ -107,13 +138,24 @@ public class IntakeTester extends LinearOpMode {
                     intake.setPower(power);
             }
 
-            if(!gamepad2.start && startWasDown){
+            if(!gamepad2.dpad_up && upWasDown){
                 toggleRandom = !toggleRandom;
+
+                if(toggleRandom){
+                    slide.slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    slide.reel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                }else{
+                    slide.slide.setTargetPosition(slide.slide.getCurrentPosition());
+                    slide.reel.setTargetPosition(slide.reel.getCurrentPosition());
+
+                    slide.slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    slide.reel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                }
             }
-            startWasDown = gamepad2.start;
+            upWasDown = gamepad2.dpad_up;
 
             if(toggleRandom){
-                slide.slide.setPower(gamepad2.left_stick_y);
+                slide.slide.setPower(-gamepad2.left_stick_y);
                 slide.reel.setPower(gamepad2.right_stick_y);
             }else{
                 if (gamepad1.dpad_up) {
@@ -130,13 +172,23 @@ public class IntakeTester extends LinearOpMode {
             }
 
             if(gamepad2.a && !a2WasDown){
-                carousel.leftDuck();
+                grabber.toggle();
             }else if(gamepad2.b && !b2WasDown){
+                grabber.toggleLooseGrab();
+            }
+            a2WasDown = gamepad2.a;
+            b2WasDown = gamepad2.b;
+
+            if(gamepad2.dpad_left){
+                carousel.leftDuck();
+            }else if(gamepad2.dpad_right){
                 carousel.rightDuck();
             }
 
-            a2WasDown = gamepad2.a;
-            b2WasDown = gamepad2.b;
+            if(gamepad2.x && !x2WasDown){
+
+            }
+            x2WasDown = gamepad2.x;
             
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = -Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
@@ -171,8 +223,8 @@ public class IntakeTester extends LinearOpMode {
 
     public void printControls(){
         telemetry.addData("Controls", "");
-        telemetry.addData("C2 Start (upon release)", "Switch to \"Random\" Mode");
-        telemetry.addData("C2 Back", "Loose close, for moving the slide down");
+        telemetry.addData("C2 dpad Up (upon release)", "Switch to \"Random\" Mode");
+        telemetry.addData("C2 Y", "Loose close, for moving the slide down");
         telemetry.addData("Left and right joysticks", "C1 Mecanum driving, C2 rail");
         telemetry.addData("Left trigger", "Take object in with intake");
         telemetry.addData("Right trigger", "Spit object out with intake");

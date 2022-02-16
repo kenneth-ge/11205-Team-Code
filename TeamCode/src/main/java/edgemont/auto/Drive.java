@@ -14,6 +14,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class Drive {
 
+    final static long INFINITY = Long.MAX_VALUE / 3;
+
     DcMotor wheelLF; 
     DcMotor wheelRF;
     DcMotor wheelRB; 
@@ -180,7 +182,8 @@ public class Drive {
         }
     }
 
-    void strafeRight(double feet, long maxTime) throws InterruptedException {
+    void strafeRight(double feet, long maxTime, boolean angleCorrect) throws InterruptedException {
+        final double initialAngle = getAngle();
         final int target = (int) (feet*(595));
         final int startPosition = wheelLF.getCurrentPosition();
 
@@ -222,10 +225,19 @@ public class Drive {
                 powers = -0.25;
             }
 
-            wheelLB.setPower(-powers);
-            wheelRF.setPower(-powers);
-            wheelLF.setPower(powers);
-            wheelRB.setPower(powers);
+            if(angleCorrect) {
+                double correctionFactor = (initialAngle - getAngle()) * 0.03;
+
+                wheelLB.setPower(-powers + correctionFactor);
+                wheelRF.setPower(-powers + correctionFactor);
+                wheelLF.setPower(powers - correctionFactor);
+                wheelRB.setPower(powers - correctionFactor);
+            }else{
+                wheelLB.setPower(-powers);
+                wheelRF.setPower(-powers);
+                wheelLF.setPower(powers);
+                wheelRB.setPower(powers);
+            }
         }
 
         wheelLB.setPower(0);
@@ -235,7 +247,8 @@ public class Drive {
     }
 
     /** Values should still be negative */
-    void strafeLeft(double feet, long maxTime) throws InterruptedException {
+    void strafeLeft(double feet, long maxTime, boolean angleCorrect) throws InterruptedException {
+        final double initialAngle = getAngle();
         final int target = (int) (-feet*(595));
         final int startPosition = wheelLF.getCurrentPosition();
 
@@ -275,10 +288,19 @@ public class Drive {
                 powers = 0.25;
             }
 
-            wheelLB.setPower(-powers);
-            wheelRF.setPower(-powers);
-            wheelLF.setPower(powers);
-            wheelRB.setPower(powers);
+            if(angleCorrect) {
+                double correctionFactor = (initialAngle - getAngle()) * 0.03;
+
+                wheelLB.setPower(-powers + correctionFactor);
+                wheelRF.setPower(-powers + correctionFactor);
+                wheelLF.setPower(powers - correctionFactor);
+                wheelRB.setPower(powers - correctionFactor);
+            }else{
+                wheelLB.setPower(-powers);
+                wheelRF.setPower(-powers);
+                wheelLF.setPower(powers);
+                wheelRB.setPower(powers);
+            }
         }
 
         wheelLB.setPower(0);
@@ -287,14 +309,22 @@ public class Drive {
         wheelRB.setPower(0);
     }
 
+    public void strafe(double feet) throws InterruptedException {
+        strafe(feet, INFINITY);
+    }
+
+    public void strafe(double feet, long maxTime) throws InterruptedException {
+        strafe(feet, maxTime, false);
+    }
+
     //Right by default
     //Weight distribution issue may be solved by placing weights on the other side of the robot
-    public void strafe(double feet, long maxTime) throws InterruptedException {
+    public void strafe(double feet, long maxTime, boolean angleCorrect) throws InterruptedException {
         if(feet > 0){
-            strafeRight(feet, maxTime);
+            strafeRight(feet, maxTime, angleCorrect);
             return;
         }else{
-            strafeLeft(feet, maxTime);
+            strafeLeft(feet, maxTime, angleCorrect);
             if(IfUtil.yes())
                 return;
         }
@@ -384,8 +414,8 @@ public class Drive {
         wheelLF.setPower(0);
         wheelRB.setPower(0);
     }
-    public static final int POS_PER_FOOT = 530;
 
+    public static final int POS_PER_FOOT = 530;
     
     public void drive(double feet) throws InterruptedException {
         int positionLF = wheelLF.getCurrentPosition();
@@ -418,7 +448,6 @@ public class Drive {
             wheelRB.setPower(-DRIVE_SPEED);
             powers[0] = powers[1] = powers[2] = powers[3] = -DRIVE_SPEED;
         }
-        
         
         while (true){
             Thread.sleep(10);
