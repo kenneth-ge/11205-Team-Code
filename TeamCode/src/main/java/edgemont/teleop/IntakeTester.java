@@ -12,7 +12,7 @@ import edgemont.lib.Carousel;
 import edgemont.lib.Grabber;
 import edgemont.lib.Slide;
 
-@TeleOp(name="Full Final TeleOp 2-12")
+@TeleOp(name="Full Final TeleOp 2-16")
 
 public class IntakeTester extends LinearOpMode {
 

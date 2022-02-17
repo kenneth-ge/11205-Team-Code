@@ -1,6 +1,9 @@
 package edgemont.auto;
 
 public class Pixel {
+
+    final Perceptron p = new Perceptron(0.8, 0.2);
+
     public double r, g, b;
     public double h, s, v;
 
@@ -14,6 +17,10 @@ public class Pixel {
         this.h = hsv[0] * 360;
         this.s = hsv[1];
         this.v = hsv[2];
+
+        //Perceptron image processing. Note that 0.6 is our normal "threshold" value for saturation,
+        //i.e. the point at which we consider the pixel to be green
+        this.s = p.getOutput(this.s, 0.6);
     }
     
     double[] RGBtoHSB(double r, double g, double b){
