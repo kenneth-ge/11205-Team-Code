@@ -76,7 +76,7 @@ public class DemoAuto extends LinearOpMode {
         for (int j = 0; j < (image[0]).length; j++) {
             for (int i = 0; i < image.length; i++) {
                 Pixel current = image[i][j];
-                if (current.h >= 70.0D && current.h <= 170.0D && current.s >= 0.49D)
+                if (current.h >= 70.0D && current.h <= 170.0D && current.s >= 0.5D) //sat > 0.5 uses our perceptron classification algorithm
                     if (j <= width / 3.0D) {
                         left++;
                     } else if (j <= 2.0D * width / 3.0D) {
