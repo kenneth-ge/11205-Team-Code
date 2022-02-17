@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Slide {
 
-    final double RATIO = 1;
+    final double RATIO = 0.83;
     final double POWER = 1;
-    final int MAX_SLIDE = (int) (10500 * 1.07), MAX_REEL = 0, MIN_SLIDE = 0, MIN_REEL = (int) (-10100 * 1.07);
+    final int MAX_SLIDE = (int) (11235), MAX_REEL = 0, MIN_SLIDE = 0, MIN_REEL = (int) (-10593);
     final double SLIDE_OVER_REEL = ((double) MIN_SLIDE) / ((double) MIN_REEL);
     public DcMotor slide, reel;
     Grabber grabber;

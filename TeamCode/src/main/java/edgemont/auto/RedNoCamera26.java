@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import edgemont.lib.Grabber;
+
 @Autonomous(name = "Red No Camera Long Depot 26pts")
 public class RedNoCamera26 extends LinearOpMode {
   Drive drive;
@@ -12,12 +14,17 @@ public class RedNoCamera26 extends LinearOpMode {
   DcMotor motor;
   Intake intake;
 
+  Grabber grabber;
+
   double motorpwr;
 
   public void runOpMode() throws InterruptedException {
     motor = (DcMotor)hardwareMap.dcMotor.get("carousel");
     drive = new Drive(this);
     intake = new Intake(hardwareMap);
+    grabber = new Grabber(hardwareMap);
+
+    //grabber.grab();
 
     waitForStart(); //where the program starts
 
@@ -39,7 +46,7 @@ public class RedNoCamera26 extends LinearOpMode {
 
     drive.drive(0.25);
 
-    intake.out();
+    intake.intake.setPower(-intake.POWER * 0.7);
     Thread.sleep(2500);
     intake.stop();
 
@@ -49,7 +56,7 @@ public class RedNoCamera26 extends LinearOpMode {
 
     drive.strafe(1, 5000);
 
-    drive.strafe(0.2, 3000);
+    drive.strafe(0.65, 3000);
     drive.turnToAngle(-0.25);
 
     drive.drive(3.75);

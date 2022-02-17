@@ -35,7 +35,7 @@ public class Carousel implements Runnable {
     @Override
     public void run() {
         while(opMode.opModeIsActive()){
-            if(left) {
+            if(right) {
                 carousel.setPower(-1);
                 try {
                     Thread.sleep(2500);
@@ -46,7 +46,7 @@ public class Carousel implements Runnable {
 
                 left = right = false;
             }
-            if(right){
+            if(left){
                 carousel.setPower(1);
                 try {
                     Thread.sleep(2500);

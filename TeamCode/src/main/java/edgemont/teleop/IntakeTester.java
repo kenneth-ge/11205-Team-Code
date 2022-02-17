@@ -186,7 +186,7 @@ public class IntakeTester extends LinearOpMode {
             }
 
             if(gamepad2.x && !x2WasDown){
-
+                grabber.toggle();
             }
             x2WasDown = gamepad2.x;
             
@@ -194,10 +194,10 @@ public class IntakeTester extends LinearOpMode {
             double robotAngle = -Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
             double rightX = -gamepad1.right_stick_x;
             
-            double v1 = -r * Math.cos(robotAngle) + rightX;
-            double v2 = r * Math.sin(robotAngle) + rightX;
-            double v3 = -r * Math.sin(robotAngle) + rightX;
-            double v4 = r * Math.cos(robotAngle) + rightX;
+            double v1 = -r * Math.cos(robotAngle) + rightX * 0.6;
+            double v2 = r * Math.sin(robotAngle) + rightX * 0.6;
+            double v3 = -r * Math.sin(robotAngle) + rightX * 0.6;
+            double v4 = r * Math.cos(robotAngle) + rightX * 0.6;
             
             boolean xReleased =!gamepad1.x && xWasPressed;
             xWasPressed = gamepad1.x;
@@ -207,10 +207,10 @@ public class IntakeTester extends LinearOpMode {
             }
             
             if(toggleSlow){
-                v1 = v1 * 0.6;
-                v2 = v2 * 0.6;
-                v3 = v3 * 0.6;
-                v4 = v4 * 0.6;
+                v1 = -r * Math.cos(robotAngle) * 0.6 + rightX * 0.3;
+                v2 = r * Math.sin(robotAngle) * 0.6 + rightX * 0.3;
+                v3 = -r * Math.sin(robotAngle) * 0.6 + rightX * 0.3;
+                v4 = r * Math.cos(robotAngle) * 0.6 + rightX * 0.3;
             }
             
             wheelLF.setPower(v1);
