@@ -1,10 +1,12 @@
-package edgemont.auto;
+package edgemont.auto.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import edgemont.auto.Drive;
+import edgemont.auto.Intake;
 import edgemont.lib.Grabber;
 
 @Autonomous(name = "Red No Camera Long Depot 26pts")

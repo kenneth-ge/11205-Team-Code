@@ -1,8 +1,11 @@
-package edgemont.auto;
+package edgemont.auto.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import edgemont.auto.Drive;
+import edgemont.auto.Intake;
 
 @Autonomous(name = "Red No Camera Short Storage 19pts")
 public class RedNoCamera19 extends LinearOpMode {

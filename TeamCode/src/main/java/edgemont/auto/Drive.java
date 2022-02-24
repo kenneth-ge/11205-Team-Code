@@ -23,7 +23,7 @@ public class Drive {
     
     BNO055IMU imu;
     Orientation lastAngles = new Orientation();
-    double globalAngle;
+    public double globalAngle;
     
     LinearOpMode opMode;
     Telemetry telemetry;
@@ -229,8 +229,8 @@ public class Drive {
                 double correctionFactor = (initialAngle - getAngle()) * 0.03;
 
                 wheelLB.setPower(-powers + correctionFactor);
-                wheelRF.setPower(-powers + correctionFactor);
-                wheelLF.setPower(powers - correctionFactor);
+                wheelRF.setPower(-powers - correctionFactor);
+                wheelLF.setPower(powers + correctionFactor);
                 wheelRB.setPower(powers - correctionFactor);
             }else{
                 wheelLB.setPower(-powers);
@@ -284,17 +284,23 @@ public class Drive {
                 double proportionLeft = 1.0 - positionsLeft / 250.0;
                 double percentPower = Math.exp(proportionLeft * -2);
                 powers = 0.25 * percentPower;
-            }
-            else{
+
+                telemetry.addData("use curve", true);
+            }else{
                 powers = 0.25;
             }
 
+            telemetry.addData("pos moved", Math.abs(average - startPosition));
+            telemetry.addData("posToMove", posToMove);
+            telemetry.addData("posAway", posAway);
+            telemetry.update();
+
             if(angleCorrect) {
-                double correctionFactor = (initialAngle - getAngle()) * 0.03;
+                double correctionFactor = (initialAngle - getAngle()) * 0.05;
 
                 wheelLB.setPower(-powers + correctionFactor);
-                wheelRF.setPower(-powers + correctionFactor);
-                wheelLF.setPower(powers - correctionFactor);
+                wheelRF.setPower(-powers - correctionFactor);
+                wheelLF.setPower(powers + correctionFactor);
                 wheelRB.setPower(powers - correctionFactor);
             }else{
                 wheelLB.setPower(-powers);
@@ -310,12 +316,12 @@ public class Drive {
         wheelRB.setPower(0);
     }
 
-    public void strafe(double feet) throws InterruptedException {
-        strafe(feet, INFINITY);
+    public void strafe(double feetRight) throws InterruptedException {
+        strafe(feetRight, INFINITY);
     }
 
-    public void strafe(double feet, long maxTime) throws InterruptedException {
-        strafe(feet, maxTime, true);
+    public void strafe(double feetRight, long maxTime) throws InterruptedException {
+        strafe(feetRight, maxTime, true);
     }
 
     //Right by default

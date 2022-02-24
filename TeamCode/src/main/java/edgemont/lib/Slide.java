@@ -5,12 +5,13 @@ import static androidx.core.math.MathUtils.clamp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class Slide {
 
     final double RATIO = 0.83;
     final double POWER = 1;
-    final int MAX_SLIDE = (int) (11235), MAX_REEL = 0, MIN_SLIDE = 0, MIN_REEL = (int) (-10593);
-    final double SLIDE_OVER_REEL = ((double) MIN_SLIDE) / ((double) MIN_REEL);
+    final int MAX_SLIDE = (int) (11235), MAX_REEL = 0, MIN_SLIDE = 0, MIN_REEL = (int) (-10540);
     public DcMotor slide, reel;
     Grabber grabber;
 
@@ -61,6 +62,28 @@ public class Slide {
             reel.setPower(POWER);
         }else{
             reel.setPower(POWER * RATIO);
+        }
+    }
+
+    public void setPos(int slidePos, int reelPos, boolean wait, double power) throws InterruptedException {
+        if(slide.getCurrentPosition() > slidePos){
+            reel.setPower(power);
+            slide.setPower(power * RATIO);
+        }else{
+            slide.setPower(power);
+            reel.setPower(power);
+        }
+
+        slide.setTargetPosition(slidePos);
+        reel.setTargetPosition(reelPos);
+
+        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        reel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        if(wait) {
+            while (slide.isBusy() || reel.isBusy()) {
+                Thread.sleep(10);
+            }
         }
     }
 

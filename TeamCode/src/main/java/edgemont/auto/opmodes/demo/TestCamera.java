@@ -1,10 +1,13 @@
-package edgemont.auto;
+package edgemont.auto.opmodes.demo;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import edgemont.auto.Camera;
+import edgemont.auto.Pixel;
 
 @Autonomous(name = "Test Camera")
 public class TestCamera extends LinearOpMode {
@@ -24,7 +27,7 @@ public class TestCamera extends LinearOpMode {
 
             System.out.println("region " + region);
 
-            Thread.sleep(2000);
+            Thread.sleep(500);
         }
     }
 
@@ -36,6 +39,11 @@ public class TestCamera extends LinearOpMode {
         int left = 0;
         int right = 0;
         int middle = 0;
+
+        double leftSat = 0;
+        double rightSat = 0;
+        double middleSat = 0;
+
         double width = (image[0]).length;
         for (int j = 0; j < (image[0]).length; j++) {
             for (int i = 0; i < image.length; i++) {
@@ -43,10 +51,13 @@ public class TestCamera extends LinearOpMode {
                 if (current.h >= 70.0D && current.h <= 170.0D && current.s >= 0.5D) //sat > 0.5 uses our perceptron classification algorithm
                     if (j <= width / 3.0D) {
                         left++;
+                        leftSat += current.s;
                     } else if (j <= 2.0D * width / 3.0D) {
                         middle++;
+                        middleSat += current.s;
                     } else {
                         right++;
+                        rightSat += current.s;
                     }
             }
         }
@@ -55,9 +66,13 @@ public class TestCamera extends LinearOpMode {
         telemetry.addData("middle", middle);
         telemetry.addData("right", right);
 
-        if (left > middle && left > right)
+        telemetry.addData("leftSat", leftSat);
+        telemetry.addData("middleSat", middleSat);
+        telemetry.addData("rightSat", rightSat);
+
+        if (leftSat > middleSat && leftSat > rightSat)
             return 1;
-        if (middle > left && middle > right)
+        if (middleSat > leftSat && middleSat > rightSat)
             return 2;
         return 3;
     }
