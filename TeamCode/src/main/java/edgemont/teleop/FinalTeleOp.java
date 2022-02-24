@@ -12,9 +12,9 @@ import edgemont.lib.Carousel;
 import edgemont.lib.Grabber;
 import edgemont.lib.Slide;
 
-@TeleOp(name="Full Final TeleOp 2-16")
+@TeleOp(name="Full Final TeleOp 2-23")
 
-public class IntakeTester extends LinearOpMode {
+public class FinalTeleOp extends LinearOpMode {
 
     DcMotor intake;
     DcMotor wheelLF; //init

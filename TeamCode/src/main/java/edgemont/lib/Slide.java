@@ -41,34 +41,6 @@ public class Slide {
     }
 
     public void setPower(final double power){
-        if(usePos()){
-            setPowerPos(power);
-            return;
-        }
-
-        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        reel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        if(power > 0){
-            if(slide.getCurrentPosition() <= MAX_SLIDE){
-                slide.setPower(-power);//7 over 4
-            }else{
-                slide.setPower(0);
-            }
-
-            reel.setPower(power * RATIO);//7 over 4
-        }else{
-            if(slide.getCurrentPosition() >= MIN_SLIDE){
-                slide.setPower(-power);//7 over 4
-            }else{
-                slide.setPower(0);
-            }
-
-            reel.setPower(power * RATIO);//7 over 4
-        }
-    }
-
-    void setPowerPos(double power){
         if(power > 0 && slide.getCurrentPosition() < 3000){
             if(!grabber.grabbing)
                 grabber.looseGrab();
@@ -84,7 +56,12 @@ public class Slide {
         reel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         slide.setPower(POWER);
-        reel.setPower(POWER * RATIO);
+
+        if(power > 0) {
+            reel.setPower(POWER);
+        }else{
+            reel.setPower(POWER * RATIO);
+        }
     }
 
     public void stop(){
@@ -98,10 +75,6 @@ public class Slide {
 
     public int reelPos(){
         return reel.getCurrentPosition();
-    }
-
-    boolean usePos(){
-        return true;
     }
 
 }

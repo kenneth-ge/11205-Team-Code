@@ -27,7 +27,7 @@ public class BlueNoCamera26 extends LinearOpMode {
     this.motorpwr = 1D;
     this.motor.setPower(this.motorpwr);
 
-    drive.strafe(0.5, 5000);
+    drive.strafe(0.5, 5000, false);
     this.drive.drive(-1.75D);
 
     Thread.sleep(2500);
@@ -35,16 +35,14 @@ public class BlueNoCamera26 extends LinearOpMode {
     this.motor.setPower(0);
 
     this.drive.drive(0.5);
-    //this.drive.strafe(0.3);
     telemetry.addData("start angle", this.drive.globalAngle);
     telemetry.update();
     this.drive.turnToZero();
 
-    //this.drive.strafe(1.5);
     this.drive.turn(-0.25);
     this.drive.drive(0.75);
 
-    this.drive.strafe(0.75, 3000);
+    this.drive.strafe(0.75, 3000, false);
     drive.turnToAngle(-0.25);
 
     intake.out();
@@ -59,7 +57,7 @@ public class BlueNoCamera26 extends LinearOpMode {
     this.drive.turn(0.25);
     this.drive.drive(1);
     this.drive.turn(-0.25);
-    this.drive.strafe(-0.53, 3000);
+    this.drive.strafe(-0.53, 3000, false);
     this.drive.drive(4);
   }
 

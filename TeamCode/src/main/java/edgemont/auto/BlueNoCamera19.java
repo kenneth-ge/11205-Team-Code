@@ -32,7 +32,7 @@ public class BlueNoCamera19 extends LinearOpMode {
     //telemetry.addData("reg", region);
     //telemetry.update();
 
-    drive.strafe(0.5, 5000);
+    drive.strafe(0.5, 5000, false);
 
     this.drive.drive(-1.75);
 
@@ -47,7 +47,7 @@ public class BlueNoCamera19 extends LinearOpMode {
     intake.outSlow();
 
     drive.turn(0.25);
-    drive.strafe(0.45, 3000);
+    drive.strafe(0.45, 3000, false);
     drive.turnToZero();
   }
 

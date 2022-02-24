@@ -2,6 +2,7 @@ package edgemont.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -24,7 +25,31 @@ public class DemoAuto extends LinearOpMode {
 
         waitForStart(); //where the program starts
 
-        long INFINITY = Long.MAX_VALUE / 3;
+        int region = scan(camera);
+
+        telemetry.addData("region", region);
+        telemetry.update();
+
+        System.out.println("region " + region);
+
+        Thread.sleep(2000);
+
+        if(region == 1){
+            drive.drive(-0.5);
+            drive.strafe(-1.5, 4000, true);
+            drive.turnToZero();
+            drive.drive(-3);
+        }else if(region == 2){
+            drive.turn(0.25);
+            drive.turn(-0.25);
+        }else{
+            drive.turn(-0.25);
+            drive.drive(2);
+            drive.turn(0.25);
+            drive.drive(-4);
+        }
+
+        /*long INFINITY = Long.MAX_VALUE / 3;
 
         int scanResult = scan(camera);
         if(scanResult == 1){
@@ -51,7 +76,7 @@ public class DemoAuto extends LinearOpMode {
         drive.strafe(3, INFINITY, true);
         Thread.sleep(1000);
         drive.strafe(-3, INFINITY, true);
-        Thread.sleep(1000);
+        Thread.sleep(1000);*/
         //spinCarousel();
 
 

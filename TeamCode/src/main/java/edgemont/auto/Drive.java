@@ -249,7 +249,7 @@ public class Drive {
     /** Values should still be negative */
     void strafeLeft(double feet, long maxTime, boolean angleCorrect) throws InterruptedException {
         final double initialAngle = getAngle();
-        final int target = (int) (-feet*(595));
+        final int posToMove = (int) Math.abs(-feet*(595));
         final int startPosition = wheelLF.getCurrentPosition();
 
         wheelLF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -259,12 +259,12 @@ public class Drive {
 
         double powers = 0.25;
 
-        wheelLB.setPower(-0.25);
-        wheelRF.setPower(-0.25);
-        wheelLF.setPower(0.25);
-        wheelRB.setPower(0.25);
+        wheelLB.setPower(-powers);
+        wheelRF.setPower(-powers);
+        wheelLF.setPower(powers);
+        wheelRB.setPower(powers);
 
-        long start = System.currentTimeMillis();
+        final long start = System.currentTimeMillis();
         while (true){
             if(System.currentTimeMillis() - start >= maxTime){
                 break;
@@ -272,10 +272,11 @@ public class Drive {
 
             Thread.sleep(10);
 
-            int average = wheelLF.getCurrentPosition();
-            int positionsLeft = Math.abs(Math.abs(target) - Math.abs(average - startPosition));
+            final int average = wheelLF.getCurrentPosition();
+            final int posAway = posToMove - Math.abs(average - startPosition);
+            final int positionsLeft = Math.abs(posAway);
 
-            if (average >= target+startPosition){
+            if (average >= posToMove+startPosition || posAway < 5){
                 break;
             }
 
@@ -314,7 +315,7 @@ public class Drive {
     }
 
     public void strafe(double feet, long maxTime) throws InterruptedException {
-        strafe(feet, maxTime, false);
+        strafe(feet, maxTime, true);
     }
 
     //Right by default
@@ -322,97 +323,9 @@ public class Drive {
     public void strafe(double feet, long maxTime, boolean angleCorrect) throws InterruptedException {
         if(feet > 0){
             strafeRight(feet, maxTime, angleCorrect);
-            return;
         }else{
             strafeLeft(feet, maxTime, angleCorrect);
-            if(IfUtil.yes())
-                return;
         }
-
-        int positionLF = Math.abs(wheelLF.getCurrentPosition());
-    
-        final int target = (int) (feet*(595));
-        final int startPosition = positionLF;/*(positionLF+positionRF+positionLB+positionRB)/4;*/
-        
-        wheelLF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelLB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelRF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelRB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        
-        double initialAngle = getAngle();
-        double[] powers = new double[4];
-
-        if(target > 0){
-            wheelLB.setPower(0.25);
-            wheelRF.setPower(0.25);
-            wheelLF.setPower(-0.25);
-            wheelRB.setPower(-0.25);
-            powers[0] = powers[1] = powers[2] = powers[3] = -0.25;
-        }
-        else{
-            wheelLB.setPower(-0.25);
-            wheelRF.setPower(-0.25);
-            wheelLF.setPower(0.25);
-            wheelRB.setPower(0.25);
-            powers[0] = powers[1] = powers[2] = powers[3] = 0.25;
-        }
-        
-        
-        while (true){
-            Thread.sleep(10);
-            positionLF = Math.abs(wheelLF.getCurrentPosition());
-            
-            int average = (positionLF)/*+positionRF+positionLB+positionRB)/4*/;
-            int positionsLeft = Math.abs(target - (average - startPosition));
-
-            /*if(positionsLeft < 10){
-                break;
-            }*/
-
-            if(target > 0){
-                if (average >= target+startPosition){
-                    break;
-                }
-            }else{
-                if (average <= target+startPosition){
-                    break;
-                }
-            }
-            
-            if (positionsLeft < 250){
-                double proportionLeft = 1 - positionsLeft / 250.0;
-                double percentPower = Math.exp(proportionLeft * -2);
-                if(target > 0){
-                    powers[0] = powers[1] = powers[2] = powers[3] = -0.25 * percentPower;
-                }
-                else{
-                    powers[0] = powers[1] = powers[2] = powers[3] = 0.25 * percentPower;
-                }
-            }
-            else{
-                if(target > 0)
-                    powers[0] = powers[1] = powers[2] = powers[3] = -0.25;
-                else
-                    powers[0] = powers[1] = powers[2] = powers[3] = 0.25;
-            }
-            
-            // double correctionFactor = (initialAngle - getAngle()) * 0.03;
-            // powers[0] += correctionFactor;
-            // powers[2] += correctionFactor;
-            // powers[1] -= correctionFactor;
-            // powers[3] -= correctionFactor;
-            
-            wheelLB.setPower(-powers[0]);
-            wheelRF.setPower(-powers[1]);
-            wheelLF.setPower(powers[2]);
-            wheelRB.setPower(powers[3]);
-        }  
-        
-        
-        wheelLB.setPower(0);
-        wheelRF.setPower(0);
-        wheelLF.setPower(0);
-        wheelRB.setPower(0);
     }
 
     public static final int POS_PER_FOOT = 530;
