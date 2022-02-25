@@ -8,7 +8,8 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
 public class Camera {
-    
+
+    final Perceptron p = new Perceptron(0.8, 0.2);
     final int WIDTH = 16, HEIGHT = 9;
     VuforiaLocalizer vuforia;
     int[] pixels = new int[WIDTH * HEIGHT];
@@ -47,6 +48,10 @@ public class Camera {
             float b = div255((color      ) & 0xff);
 
             pix[row][col] = new Pixel(r, g, b);
+
+            //Perceptron image processing. Note that 0.6 is our normal "threshold" value for saturation,
+            //i.e. the point at which we consider the pixel to be green
+            pix[row][col].s = p.getOutput(pix[row][col].s, 0.6);
         }
         
         return pix;
