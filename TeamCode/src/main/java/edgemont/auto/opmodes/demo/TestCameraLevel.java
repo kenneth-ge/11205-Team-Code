@@ -12,7 +12,7 @@ import edgemont.lib.Carousel;
 import edgemont.lib.Grabber;
 import edgemont.lib.Slide;
 
-@Autonomous(name="Test Camera Level")
+@Autonomous(name="Red Auto Hub Duck Shipping-hub-park 42pts")
 public class TestCameraLevel extends LinearOpMode {
 
     Drive drive;
@@ -33,6 +33,7 @@ public class TestCameraLevel extends LinearOpMode {
 
         waitForStart(); //where the program starts
 
+        drive.drive(-0.1);
         drive.strafe(0.85);
 
         int region = scan(camera);
@@ -46,28 +47,54 @@ public class TestCameraLevel extends LinearOpMode {
                 drive.drive(-1);
                 drive.turn(0.08);
                 grabber.release();
-                slide.setPos(5214, -5445, false, 1);
-                grabber.looseGrab();
+                slide.setPos((int) (5214 * 1.1), (int) (-5445 * 1.1), false, 1);
                 drive.turn(-0.08);
+                slide.waitForFinish();
+                grabber.looseGrab();
 
                 slide.setPos(0, 0, false, 0.4);
 
                 drive.drive(0.8);
+                Thread.sleep(500);
                 drive.turnToAngle(0.5);
-                drive.strafe(-4.5);
-                drive.strafe(0.2);
+                drive.strafe(-4.35);
                 drive.drive(-1.05);
 
-                motor.setPower(motorpwr);
-                Thread.sleep(3000);
-                motor.setPower(0);
+                carousel();
 
-                drive.drive(1.8);
+                drive.turnToAngle(0.5);
+
+                drive.drive(1.9);
 
                 break;
             case 3: //right -> bottom
+                drive.strafe(-26./12. - 0.85, Drive.INFINITY, true, 0.5);
+                slide.setPos((int) (0.90 * 5333 * 0.5 * 0.98), (int) (-5160 * 0.90 * 0.5 * 0.98), false, 0.5);
+                drive.drive(-18./12. + 0.1);
+                drive.turn(-5./360.);
+                slide.setPos((int) (0.90 * 5333 * 0.98), (int) (-5160 * 0.90 * 0.98), true, 0.5);
+                drive.turn(5./360.);
+                grabber.release();
+                Thread.sleep(500);
+                grabber.looseGrab();
+                slide.setPos(0, 0, false, 0.3);
+                drive.turn(-0.5);
+                drive.turnToAngle(-0.5);
+                drive.drive(-0.85);
+                drive.strafe(-5, Drive.INFINITY, true, 0.5);
+                drive.drive(-0.68);
 
+                carousel();
+
+                drive.turn(-0.25);
+                drive.drive(6, 1);
+                drive.strafe(0.8, Drive.INFINITY, true, 0.5);
+                drive.drive(3, 0.5);
+
+                /*drive.drive(1.8);
+                drive.turnToAngle(0.5);*/
                 break;
+            case 1:
             default: //left -> top
                 /*drive.strafe(-2);
                 drive.drive(-0.5);
@@ -81,6 +108,12 @@ public class TestCameraLevel extends LinearOpMode {
                 slide.setPos(0, 0);*/
                 break;
         }
+    }
+
+    public void carousel() throws InterruptedException {
+        motor.setPower(motorpwr);
+        Thread.sleep(3000);
+        motor.setPower(0);
     }
 
     public int scan(Camera camera) throws InterruptedException {

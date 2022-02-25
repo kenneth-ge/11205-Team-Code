@@ -1,12 +1,17 @@
 package edgemont.teleop;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import edgemont.lib.Carousel;
 import edgemont.lib.Grabber;
@@ -26,8 +31,21 @@ public class FinalTeleOp extends LinearOpMode {
     Carousel carousel;
     RevColorSensorV3 color;
 
+    BNO055IMU imu;
+    Orientation lastAngles = new Orientation();
+    double globalAngle;
+
     @Override
     public void runOpMode() throws InterruptedException {
+        BNO055IMU.Parameters params = new BNO055IMU.Parameters();
+        params.mode = BNO055IMU.SensorMode.IMU;
+        params.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        params.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        params.loggingEnabled = false;
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(params);
+
         color = hardwareMap.get(RevColorSensorV3.class, "color");
         grabber = new Grabber(hardwareMap);
         slide = new Slide(hardwareMap, grabber);
@@ -53,7 +71,14 @@ public class FinalTeleOp extends LinearOpMode {
         wheelRB.setDirection(DcMotor.Direction.FORWARD);
         
         printControls();
-        
+
+        while(!imu.isGyroCalibrated()){
+            Thread.sleep(20);
+        }
+
+        getAngle();
+        globalAngle = 0;
+
         waitForStart();
 
         carousel.threadStart();
@@ -103,6 +128,7 @@ public class FinalTeleOp extends LinearOpMode {
             }
 
             telemetry.addData("Time", (System.currentTimeMillis() - startTime) / 1000);
+            telemetry.addData("Angle", getAngle());
             telemetry.addData("pos slide", slide.slidePos());
             telemetry.addData("pos reel", slide.reelPos());
             printControls();
@@ -191,7 +217,7 @@ public class FinalTeleOp extends LinearOpMode {
             x2WasDown = gamepad2.x;
             
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-            double robotAngle = -Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+            double robotAngle = -Math.toRadians(getAngle()) - Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4 + Math.PI;
             double rightX = -gamepad1.right_stick_x;
             
             double v1 = -r * Math.cos(robotAngle) + rightX * 0.6;
@@ -236,5 +262,22 @@ public class FinalTeleOp extends LinearOpMode {
         telemetry.addData("Controller 2 A button", "Red duck");
         telemetry.addData("Controller 2 B button", "Blue duck");
         telemetry.update();
+    }
+
+    public double getAngle(){
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
+
+        if (deltaAngle < -180)
+            deltaAngle += 360;
+        else if (deltaAngle > 180)
+            deltaAngle -= 360;
+
+        globalAngle += deltaAngle;
+
+        lastAngles = angles;
+
+        return globalAngle;
     }
 }

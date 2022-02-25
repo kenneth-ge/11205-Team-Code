@@ -56,11 +56,11 @@ public class Slide {
         slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         reel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        slide.setPower(POWER);
-
-        if(power > 0) {
-            reel.setPower(POWER);
+        if(power > 0){
+            slide.setPower(POWER / 2 * RATIO);
+            reel.setPower(POWER / 2);
         }else{
+            slide.setPower(POWER);
             reel.setPower(POWER * RATIO);
         }
     }
@@ -84,6 +84,12 @@ public class Slide {
             while (slide.isBusy() || reel.isBusy()) {
                 Thread.sleep(10);
             }
+        }
+    }
+
+    public void waitForFinish() throws InterruptedException {
+        while (slide.isBusy() || reel.isBusy()) {
+            Thread.sleep(10);
         }
     }
 

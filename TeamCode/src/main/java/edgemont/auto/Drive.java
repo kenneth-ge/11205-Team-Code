@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class Drive {
 
-    final static long INFINITY = Long.MAX_VALUE / 3;
+    public final static long INFINITY = Long.MAX_VALUE / 3;
 
     DcMotor wheelLF; 
     DcMotor wheelRF;
@@ -23,7 +23,7 @@ public class Drive {
     
     BNO055IMU imu;
     Orientation lastAngles = new Orientation();
-    public double globalAngle;
+    double globalAngle;
     
     LinearOpMode opMode;
     Telemetry telemetry;
@@ -182,7 +182,7 @@ public class Drive {
         }
     }
 
-    void strafeRight(double feet, long maxTime, boolean angleCorrect) throws InterruptedException {
+    void strafeRight(double feet, long maxTime, boolean angleCorrect, double power) throws InterruptedException {
         final double initialAngle = getAngle();
         final int target = (int) (feet*(595));
         final int startPosition = wheelLF.getCurrentPosition();
@@ -193,12 +193,12 @@ public class Drive {
         wheelRB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //double initialAngle = getAngle();
-        double powers = -0.25;
+        double powers = power;
 
-        wheelLB.setPower(0.25);
-        wheelRF.setPower(0.25);
-        wheelLF.setPower(-0.25);
-        wheelRB.setPower(-0.25);
+        wheelLB.setPower(power);
+        wheelRF.setPower(power);
+        wheelLF.setPower(-power);
+        wheelRB.setPower(-power);
 
         long start = System.currentTimeMillis();
 
@@ -219,10 +219,10 @@ public class Drive {
             if (positionsLeft < 250){
                 double proportionLeft = 1 - positionsLeft / 250.0;
                 double percentPower = Math.exp(proportionLeft * -2);
-                powers = -0.25 * percentPower;
+                powers = -power * percentPower;
             }
             else{
-                powers = -0.25;
+                powers = -power;
             }
 
             if(angleCorrect) {
@@ -247,7 +247,7 @@ public class Drive {
     }
 
     /** Values should still be negative */
-    void strafeLeft(double feet, long maxTime, boolean angleCorrect) throws InterruptedException {
+    void strafeLeft(double feet, long maxTime, boolean angleCorrect, double power) throws InterruptedException {
         final double initialAngle = getAngle();
         final int posToMove = (int) Math.abs(-feet*(595));
         final int startPosition = wheelLF.getCurrentPosition();
@@ -257,7 +257,7 @@ public class Drive {
         wheelRF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheelRB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        double powers = 0.25;
+        double powers = power;
 
         wheelLB.setPower(-powers);
         wheelRF.setPower(-powers);
@@ -283,11 +283,11 @@ public class Drive {
             if (positionsLeft < 250){
                 double proportionLeft = 1.0 - positionsLeft / 250.0;
                 double percentPower = Math.exp(proportionLeft * -2);
-                powers = 0.25 * percentPower;
+                powers = power * percentPower;
 
                 telemetry.addData("use curve", true);
             }else{
-                powers = 0.25;
+                powers = power;
             }
 
             telemetry.addData("pos moved", Math.abs(average - startPosition));
@@ -324,19 +324,27 @@ public class Drive {
         strafe(feetRight, maxTime, true);
     }
 
+    public void strafe(double feet, long maxTime, boolean angleCorrect) throws InterruptedException {
+        strafe(feet, maxTime, angleCorrect, 0.25);
+    }
+
     //Right by default
     //Weight distribution issue may be solved by placing weights on the other side of the robot
-    public void strafe(double feet, long maxTime, boolean angleCorrect) throws InterruptedException {
+    public void strafe(double feet, long maxTime, boolean angleCorrect, double power) throws InterruptedException {
         if(feet > 0){
-            strafeRight(feet, maxTime, angleCorrect);
+            strafeRight(feet, maxTime, angleCorrect, power);
         }else{
-            strafeLeft(feet, maxTime, angleCorrect);
+            strafeLeft(feet, maxTime, angleCorrect, power);
         }
     }
 
     public static final int POS_PER_FOOT = 530;
-    
+
     public void drive(double feet) throws InterruptedException {
+        drive(feet, DRIVE_SPEED);
+    }
+
+    public void drive(double feet, double power) throws InterruptedException {
         int positionLF = wheelLF.getCurrentPosition();
         int positionLB = wheelLB.getCurrentPosition();
         int positionRF = wheelRF.getCurrentPosition();
@@ -354,18 +362,18 @@ public class Drive {
         double[] powers = new double[4];
 
         if(target > 0){
-            wheelLB.setPower(DRIVE_SPEED);
-            wheelRF.setPower(DRIVE_SPEED);
-            wheelLF.setPower(DRIVE_SPEED);
-            wheelRB.setPower(DRIVE_SPEED);
-            powers[0] = powers[1] = powers[2] = powers[3] = DRIVE_SPEED;
+            wheelLB.setPower(power);
+            wheelRF.setPower(power);
+            wheelLF.setPower(power);
+            wheelRB.setPower(power);
+            powers[0] = powers[1] = powers[2] = powers[3] = power;
         }
         else{
-            wheelLB.setPower(-DRIVE_SPEED);
-            wheelRF.setPower(-DRIVE_SPEED);
-            wheelLF.setPower(-DRIVE_SPEED);
-            wheelRB.setPower(-DRIVE_SPEED);
-            powers[0] = powers[1] = powers[2] = powers[3] = -DRIVE_SPEED;
+            wheelLB.setPower(-power);
+            wheelRF.setPower(-power);
+            wheelLF.setPower(-power);
+            wheelRB.setPower(-power);
+            powers[0] = powers[1] = powers[2] = powers[3] = -power;
         }
         
         while (true){
@@ -391,17 +399,17 @@ public class Drive {
                 double proportionLeft = 1 - positionsLeft / 250.0;
                 double percentPower = Math.exp(proportionLeft * -2);
                 if(target > 0){
-                    powers[0] = powers[1] = powers[2] = powers[3] = DRIVE_SPEED * percentPower;
+                    powers[0] = powers[1] = powers[2] = powers[3] = power * percentPower;
                 }
                 else{
-                    powers[0] = powers[1] = powers[2] = powers[3] = -DRIVE_SPEED * percentPower;
+                    powers[0] = powers[1] = powers[2] = powers[3] = -power * percentPower;
                 }
             }
             else{
                 if(target > 0)
-                    powers[0] = powers[1] = powers[2] = powers[3] = DRIVE_SPEED;
+                    powers[0] = powers[1] = powers[2] = powers[3] = power;
                 else
-                    powers[0] = powers[1] = powers[2] = powers[3] = -DRIVE_SPEED;
+                    powers[0] = powers[1] = powers[2] = powers[3] = -power;
             }
             
             double correctionFactor = (initialAngle - getAngle()) * 0.03;

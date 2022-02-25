@@ -40,7 +40,7 @@ public class BlueNoCamera26 extends LinearOpMode {
     this.motor.setPower(0);
 
     this.drive.drive(0.5);
-    telemetry.addData("start angle", this.drive.globalAngle);
+    telemetry.addData("start angle", this.drive.getAngle());
     telemetry.update();
     this.drive.turnToZero();
 

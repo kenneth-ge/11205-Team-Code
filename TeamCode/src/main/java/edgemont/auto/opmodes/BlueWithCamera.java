@@ -43,7 +43,7 @@ public class BlueWithCamera extends LinearOpMode {
 
     this.drive.drive(0.5);
     //this.drive.strafe(0.3);
-    telemetry.addData("start angle", this.drive.globalAngle);
+    telemetry.addData("start angle", drive.getAngle());
     telemetry.update();
     this.drive.turnToZero();
 
