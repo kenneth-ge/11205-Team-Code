@@ -137,14 +137,16 @@ public class Drive {
         wheelLB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheelRF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheelRB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            
-        wheelLB.setPower(TURN_SPEED * Math.signum(rotation));
-        wheelRF.setPower(-TURN_SPEED * Math.signum(rotation));
-        wheelLF.setPower(TURN_SPEED * Math.signum(rotation));
-        wheelRB.setPower(-TURN_SPEED * Math.signum(rotation));
         
         final double initialAngle = getAngle();
         final double targetAngle = initialAngle+rotation*360.;
+
+        if(Math.abs(targetAngle - getAngle()) >= 30.) {
+            wheelLB.setPower(TURN_SPEED * Math.signum(rotation));
+            wheelRF.setPower(-TURN_SPEED * Math.signum(rotation));
+            wheelLF.setPower(TURN_SPEED * Math.signum(rotation));
+            wheelRB.setPower(-TURN_SPEED * Math.signum(rotation));
+        }
         
         while(true){
             double angleLeft = targetAngle - getAngle();

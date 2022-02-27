@@ -68,28 +68,29 @@ public class TestCameraLevel extends LinearOpMode {
 
                 break;
             case 3: //right -> bottom
-                drive.strafe(-26./12. - 0.85, Drive.INFINITY, true, 0.5);
-                slide.setPos((int) (0.90 * 5333 * 0.5 * 0.98), (int) (-5160 * 0.90 * 0.5 * 0.98), false, 0.5);
+                drive.strafe(-26./12. - 0.85, Drive.INFINITY, true, 0.25);
+                slide.setPos((int) (0.90 * 5333 * 0.5 * 0.90), (int) (-5160 * 0.90 * 0.5 * 90), false, 0.5);
                 drive.drive(-18./12. + 0.1);
-                drive.turn(-5./360.);
-                slide.setPos((int) (0.90 * 5333 * 0.98), (int) (-5160 * 0.90 * 0.98), true, 0.5);
-                drive.turn(5./360.);
+                drive.turn(-5/360.);
+                slide.setPos((int) (0.90 * 5333 * 0.90), (int) (-5160 * 0.90 * 0.90), true, 0.5);
+                drive.turn(5/360.);
                 grabber.release();
                 Thread.sleep(500);
                 grabber.looseGrab();
                 slide.setPos(0, 0, false, 0.3);
+                drive.drive(0.1);
                 drive.turn(-0.5);
                 drive.turnToAngle(-0.5);
                 drive.drive(-0.85);
                 drive.strafe(-5, Drive.INFINITY, true, 0.5);
-                drive.drive(-0.68);
+                drive.drive(-0.60);
 
                 carousel();
 
-                drive.turn(-0.25);
-                drive.drive(6, 1);
+                drive.turnToAngle(0.25);
+                /*drive.drive(6, 1);
                 drive.strafe(0.8, Drive.INFINITY, true, 0.5);
-                drive.drive(3, 0.5);
+                drive.drive(2.5, 0.5);*/
 
                 /*drive.drive(1.8);
                 drive.turnToAngle(0.5);*/

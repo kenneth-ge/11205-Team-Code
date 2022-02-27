@@ -11,7 +11,7 @@ public class Slide {
 
     final double RATIO = 0.83;
     final double POWER = 1;
-    final int MAX_SLIDE = (int) (11235), MAX_REEL = 0, MIN_SLIDE = 0, MIN_REEL = (int) (-10540);
+    final int MAX_SLIDE = (int) (11235), MAX_REEL = 0, MIN_SLIDE = 0, MIN_REEL = (int) (-11235);//(-10540);
     public DcMotor slide, reel;
     Grabber grabber;
 
@@ -57,7 +57,7 @@ public class Slide {
         reel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         if(power > 0){
-            slide.setPower(POWER / 2 * RATIO);
+            slide.setPower(POWER / 2);
             reel.setPower(POWER / 2);
         }else{
             slide.setPower(POWER);
