@@ -3,7 +3,7 @@ package edgemont.old;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import edgemont.auto.Camera;
+import edgemont.auto.cameravision.Camera;
 
 @Autonomous(name="Learned", group="Test")
 public class Learned extends LinearOpMode {

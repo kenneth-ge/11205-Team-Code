@@ -4,11 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import edgemont.auto.Camera;
-import edgemont.auto.Drive;
-import edgemont.auto.IfUtil;
-import edgemont.auto.Pixel;
-import edgemont.lib.Carousel;
+import edgemont.auto.cameravision.Camera;
+import edgemont.auto.drive.Drive;
+import edgemont.auto.cameravision.Pixel;
 import edgemont.lib.Grabber;
 import edgemont.lib.Slide;
 

@@ -5,10 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import edgemont.auto.Camera;
-import edgemont.auto.Drive;
+import edgemont.auto.cameravision.Camera;
+import edgemont.auto.drive.Drive;
 import edgemont.auto.Intake;
-import edgemont.auto.Pixel;
+import edgemont.auto.cameravision.Pixel;
 
 @Autonomous(name = "Blue With Camera")
 public class BlueWithCamera extends LinearOpMode {

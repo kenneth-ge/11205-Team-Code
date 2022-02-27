@@ -2,10 +2,9 @@ package edgemont.auto.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import edgemont.auto.Drive;
+import edgemont.auto.drive.Drive;
 import edgemont.auto.Intake;
 import edgemont.lib.Grabber;
 

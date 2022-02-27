@@ -1,4 +1,4 @@
-package edgemont.auto;
+package edgemont.auto.drive;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,6 +11,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+import static edgemont.auto.drive.TrajectoryFormulas.*;
 
 public class Drive {
 
@@ -361,20 +363,36 @@ public class Drive {
         double initialAngle = getAngle();
         double[] powers = new double[4];
 
-        /*if(target > 0){
-            wheelLB.setPower(power);
-            wheelRF.setPower(power);
-            wheelLF.setPower(power);
-            wheelRB.setPower(power);
-            powers[0] = powers[1] = powers[2] = powers[3] = power;
+        if(power > 0.7){ //apply minimum jerk smoothing curve to acceleration when robot moves fast
+            int average = (positionLF+positionRF+positionLB+positionRB)/4;
+            int positionsLeft = Math.abs(target+startPosition-average);
+            int posTotal = Math.abs(target);
+            int posMoved = posTotal - positionsLeft;
+
+            if(positionsLeft > 500){
+                while(posMoved < 250){
+                    double curve = minJerkTrajectory(posMoved, 250);
+
+                    powers[0] = powers[1] = powers[2] = powers[3] = power * curve * Math.signum(target);
+
+                    double correctionFactor = (initialAngle - getAngle()) * 0.03;
+                    powers[0] += correctionFactor;
+                    powers[2] += correctionFactor;
+                    powers[1] -= correctionFactor;
+                    powers[3] -= correctionFactor;
+
+                    wheelLB.setPower(powers[0]);
+                    wheelRF.setPower(powers[1]);
+                    wheelLF.setPower(powers[2]);
+                    wheelRB.setPower(powers[3]);
+
+                    average = (positionLF+positionRF+positionLB+positionRB)/4;
+                    positionsLeft = Math.abs(target+startPosition-average);
+                    posTotal = Math.abs(target);
+                    posMoved = posTotal - positionsLeft;
+                }
+            }
         }
-        else{
-            wheelLB.setPower(-power);
-            wheelRF.setPower(-power);
-            wheelLF.setPower(-power);
-            wheelRB.setPower(-power);
-            powers[0] = powers[1] = powers[2] = powers[3] = -power;
-        }*/
         
         while (true){
             Thread.sleep(10);

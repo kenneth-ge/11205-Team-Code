@@ -1,4 +1,4 @@
-package edgemont.auto;
+package edgemont.auto.cameravision;
 
 public class Pixel {
 

@@ -2,12 +2,9 @@ package edgemont.auto.opmodes.demo;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import edgemont.auto.Camera;
-import edgemont.auto.Pixel;
+import edgemont.auto.cameravision.Camera;
+import edgemont.auto.cameravision.Pixel;
 
 @Autonomous(name = "Test Camera")
 public class TestCamera extends LinearOpMode {
