@@ -140,13 +140,6 @@ public class Drive {
         
         final double initialAngle = getAngle();
         final double targetAngle = initialAngle+rotation*360.;
-
-        if(Math.abs(targetAngle - getAngle()) >= 30.) {
-            wheelLB.setPower(TURN_SPEED * Math.signum(rotation));
-            wheelRF.setPower(-TURN_SPEED * Math.signum(rotation));
-            wheelLF.setPower(TURN_SPEED * Math.signum(rotation));
-            wheelRB.setPower(-TURN_SPEED * Math.signum(rotation));
-        }
         
         while(true){
             double angleLeft = targetAngle - getAngle();
@@ -160,6 +153,11 @@ public class Drive {
                 wheelRF.setPower(percentPower*-TURN_SPEED * Math.signum(rotation));
                 wheelLF.setPower(percentPower*TURN_SPEED * Math.signum(rotation));
                 wheelRB.setPower(percentPower*-TURN_SPEED * Math.signum(rotation));
+            }else{
+                wheelLB.setPower(TURN_SPEED * Math.signum(rotation));
+                wheelRF.setPower(-TURN_SPEED * Math.signum(rotation));
+                wheelLF.setPower(TURN_SPEED * Math.signum(rotation));
+                wheelRB.setPower(-TURN_SPEED * Math.signum(rotation));
             }
             
             if(targetAngle - initialAngle > 0){
