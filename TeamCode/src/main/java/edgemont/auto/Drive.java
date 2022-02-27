@@ -197,10 +197,10 @@ public class Drive {
         //double initialAngle = getAngle();
         double powers = power;
 
-        wheelLB.setPower(power);
+        /*wheelLB.setPower(power);
         wheelRF.setPower(power);
         wheelLF.setPower(-power);
-        wheelRB.setPower(-power);
+        wheelRB.setPower(-power);*/
 
         long start = System.currentTimeMillis();
 
@@ -261,10 +261,10 @@ public class Drive {
 
         double powers = power;
 
-        wheelLB.setPower(-powers);
+        /*wheelLB.setPower(-powers);
         wheelRF.setPower(-powers);
         wheelLF.setPower(powers);
-        wheelRB.setPower(powers);
+        wheelRB.setPower(powers);*/
 
         final long start = System.currentTimeMillis();
         while (true){
@@ -363,7 +363,7 @@ public class Drive {
         double initialAngle = getAngle();
         double[] powers = new double[4];
 
-        if(target > 0){
+        /*if(target > 0){
             wheelLB.setPower(power);
             wheelRF.setPower(power);
             wheelLF.setPower(power);
@@ -376,7 +376,7 @@ public class Drive {
             wheelLF.setPower(-power);
             wheelRB.setPower(-power);
             powers[0] = powers[1] = powers[2] = powers[3] = -power;
-        }
+        }*/
         
         while (true){
             Thread.sleep(10);
