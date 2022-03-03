@@ -1,4 +1,4 @@
-package edgemont.auto.opmodes.demo;
+package edgemont.auto.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,7 +11,7 @@ import edgemont.lib.Grabber;
 import edgemont.lib.Slide;
 
 @Autonomous(name="Red Auto Hub Duck Shipping-hub-park 42pts")
-public class TestCameraLevel extends LinearOpMode {
+public class RedAuto42 extends LinearOpMode {
 
     Drive drive;
     Grabber grabber;

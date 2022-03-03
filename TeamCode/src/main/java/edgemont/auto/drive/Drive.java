@@ -347,6 +347,8 @@ public class Drive {
     }
 
     public void drive(double feet, double power) throws InterruptedException {
+        double posCurve = 250; //positions when the curve applies
+
         int positionLF = wheelLF.getCurrentPosition();
         int positionLB = wheelLB.getCurrentPosition();
         int positionRF = wheelRF.getCurrentPosition();
@@ -363,15 +365,25 @@ public class Drive {
         double initialAngle = getAngle();
         double[] powers = new double[4];
 
-        if(power > 0.7){ //apply minimum jerk smoothing curve to acceleration when robot moves fast
+        if(power >= 0.7){ //apply minimum jerk smoothing curve to acceleration when robot moves fast
             int average = (positionLF+positionRF+positionLB+positionRB)/4;
             int positionsLeft = Math.abs(target+startPosition-average);
-            int posTotal = Math.abs(target);
+            final int posTotal = Math.abs(target);
             int posMoved = posTotal - positionsLeft;
 
-            if(positionsLeft > 500){
+            posCurve = 550 * Math.pow(power / 0.7, 1.6);
+
+            double posCurveUp = 200;
+
+            if(positionsLeft > posCurve + posCurveUp){
                 while(posMoved < 250){
-                    double curve = minJerkTrajectory(posMoved, 250);
+                    double curve = linear(posMoved, posCurveUp);
+
+                    telemetry.addData("average", average);
+                    telemetry.addData("posLeft", positionsLeft);
+                    telemetry.addData("Pos moved", posMoved);
+                    telemetry.addData("Curve", curve);
+                    telemetry.update();
 
                     powers[0] = powers[1] = powers[2] = powers[3] = power * curve * Math.signum(target);
 
@@ -386,9 +398,13 @@ public class Drive {
                     wheelLF.setPower(powers[2]);
                     wheelRB.setPower(powers[3]);
 
+                    positionLF = wheelLF.getCurrentPosition();
+                    positionLB = wheelLB.getCurrentPosition();
+                    positionRF = wheelRF.getCurrentPosition();
+                    positionRB = wheelRB.getCurrentPosition();
+
                     average = (positionLF+positionRF+positionLB+positionRB)/4;
                     positionsLeft = Math.abs(target+startPosition-average);
-                    posTotal = Math.abs(target);
                     posMoved = posTotal - positionsLeft;
                 }
             }
@@ -413,8 +429,8 @@ public class Drive {
                 }
             }
             
-            if (positionsLeft < 250){
-                double proportionLeft = 1 - positionsLeft / 250.0;
+            if (positionsLeft < posCurve){
+                double proportionLeft = 1 - positionsLeft / posCurve;
                 double percentPower = Math.exp(proportionLeft * -2);
                 if(target > 0){
                     powers[0] = powers[1] = powers[2] = powers[3] = power * percentPower;

@@ -94,9 +94,11 @@ public class FinalTeleOp extends LinearOpMode {
         boolean x2WasDown = false;
         boolean upWasDown = false;
         boolean y2WasDown = false;
+        boolean back1WasDown = false;
 
         boolean wasRumbling = false;
         boolean shouldRumble = false;
+        boolean fieldCentric = true;
 
         boolean consideredGrabbingAfterRumble = false;
 
@@ -130,7 +132,6 @@ public class FinalTeleOp extends LinearOpMode {
             telemetry.addData("Time", (System.currentTimeMillis() - startTime) / 1000);
             telemetry.addData("Angle", getAngle());
             telemetry.addData("pos slide", slide.slidePos());
-            telemetry.addData("pos reel", slide.reelPos());
             printControls();
 
             if(gamepad1.a && !aWasDown){
@@ -169,20 +170,16 @@ public class FinalTeleOp extends LinearOpMode {
 
                 if(toggleRandom){
                     slide.slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    slide.reel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 }else{
                     slide.slide.setTargetPosition(slide.slide.getCurrentPosition());
-                    slide.reel.setTargetPosition(slide.reel.getCurrentPosition());
 
                     slide.slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    slide.reel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
             }
             upWasDown = gamepad2.dpad_up;
 
             if(toggleRandom){
                 slide.slide.setPower(-gamepad2.left_stick_y);
-                slide.reel.setPower(gamepad2.right_stick_y);
             }else{
                 if (gamepad1.dpad_up) {
                     slide.up();
@@ -215,10 +212,19 @@ public class FinalTeleOp extends LinearOpMode {
                 grabber.toggle();
             }
             x2WasDown = gamepad2.x;
+
+            if(gamepad1.back && !back1WasDown){
+                fieldCentric = !fieldCentric;
+            }
+            back1WasDown = gamepad1.back;
             
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-            double robotAngle = -Math.toRadians(getAngle()) - Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4 + Math.PI;
+            double robotAngle = -Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4 + Math.PI;
             double rightX = -gamepad1.right_stick_x;
+
+            if(fieldCentric){
+                robotAngle += -Math.toRadians(getAngle());
+            }
             
             double v1 = -r * Math.cos(robotAngle) + rightX * 0.6;
             double v2 = r * Math.sin(robotAngle) + rightX * 0.6;
@@ -261,6 +267,7 @@ public class FinalTeleOp extends LinearOpMode {
         telemetry.addData("Controller 2 left joystick", "Up moves slide up");
         telemetry.addData("Controller 2 A button", "Red duck");
         telemetry.addData("Controller 2 B button", "Blue duck");
+        telemetry.addData("Controller 1 Back", "Toggle field-centric");
         telemetry.update();
     }
 
