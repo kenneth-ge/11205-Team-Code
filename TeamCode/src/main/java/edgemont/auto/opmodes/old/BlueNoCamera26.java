@@ -1,4 +1,4 @@
-package edgemont.auto.opmodes;
+package edgemont.auto.opmodes.old;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,8 +10,8 @@ import edgemont.auto.drive.Drive;
 import edgemont.auto.Intake;
 import edgemont.auto.cameravision.Pixel;
 
-@Autonomous(name = "Blue No Camera Short Storage 19pts")
-public class BlueNoCamera19 extends LinearOpMode {
+@Autonomous(name = "Blue No Camera Long Depot 26pts")
+public class BlueNoCamera26 extends LinearOpMode {
   Drive drive;
 
   Camera camera;
@@ -32,28 +32,38 @@ public class BlueNoCamera19 extends LinearOpMode {
     this.motorpwr = 1D;
     this.motor.setPower(this.motorpwr);
 
-    //int region = scan(camera);
-
-    //telemetry.addData("reg", region);
-    //telemetry.update();
-
     drive.strafe(0.5, 5000, false);
-
-    this.drive.drive(-1.75);
+    this.drive.drive(-1.75D);
 
     Thread.sleep(2500);
 
     this.motor.setPower(0);
 
+    this.drive.drive(0.5);
+    telemetry.addData("start angle", this.drive.getAngle());
+    telemetry.update();
+    this.drive.turnToZero();
+
     this.drive.turn(-0.25);
-    this.drive.drive(1.25);
+    this.drive.drive(0.75);
+
+    this.drive.strafe(0.75, 3000, false);
+    drive.turnToAngle(-0.25);
+
     intake.out();
     Thread.sleep(2500);
-    intake.outSlow();
+    intake.stop();
 
-    drive.turn(0.25);
-    drive.strafe(0.45, 3000, false);
-    drive.turnToZero();
+    this.drive.turn(0.25);
+
+    //this.drive.strafe(-1.5);
+
+    this.drive.drive(5);
+    this.drive.turn(0.25);
+    this.drive.drive(1);
+    this.drive.turn(-0.25);
+    this.drive.strafe(-0.53, 3000, false);
+    this.drive.drive(4);
   }
 
   public void spinCarousel(CRServo servo, int time, double servopwr) throws InterruptedException {

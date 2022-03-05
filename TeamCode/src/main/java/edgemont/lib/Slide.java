@@ -11,7 +11,7 @@ public class Slide {
 
     final double RATIO = 0.83;
     final double POWER = 0.3;
-    final int MAX_SLIDE = (int) (4600), MIN_SLIDE = 0;
+    public static final int MAX_SLIDE = (int) (4400), MIN_SLIDE = 0;
     public DcMotor slide;
     Grabber grabber;
 
@@ -22,14 +22,6 @@ public class Slide {
 
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        /*slide.setPower(POWER);
-        slide.setTargetPosition(0);
-        reel.setPower(POWER * RATIO);
-        reel.setTargetPosition(0);
-
-        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        reel.setMode(DcMotor.RunMode.RUN_TO_POSITION);*/
     }
 
     public void up(){
@@ -41,7 +33,7 @@ public class Slide {
     }
 
     public void setPower(final double power){
-        if(power > 0 && slide.getCurrentPosition() < 3000){
+        if(power > 0 && slide.getCurrentPosition() < 1000){
             if(!grabber.grabbing)
                 grabber.looseGrab();
         }
@@ -53,13 +45,13 @@ public class Slide {
         slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         if(power > 0){
-            slide.setPower(POWER / 2);
+            slide.setPower(power / 2);
         }else{
-            slide.setPower(POWER);
+            slide.setPower(power);
         }
     }
 
-    public void setPos(int slidePos, int reelPos, boolean wait, double power) throws InterruptedException {
+    public void setPos(int slidePos, boolean wait, double power) throws InterruptedException {
         if(slide.getCurrentPosition() > slidePos){
             slide.setPower(power * RATIO);
         }else{

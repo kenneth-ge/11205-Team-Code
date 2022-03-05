@@ -9,13 +9,14 @@ public class Carousel implements Runnable {
 
     boolean left = false;
     boolean right = false;
-    DcMotor carousel;
+    DcMotor carousel, carousel2;
     LinearOpMode opMode;
 
     public Carousel(HardwareMap hardwareMap, LinearOpMode opMode){
         this.opMode = opMode;
 
         carousel = hardwareMap.get(DcMotor.class, "carousel");
+        carousel2 = hardwareMap.get(DcMotor.class, "reel");
     }
 
     public void threadStart(){
@@ -37,6 +38,7 @@ public class Carousel implements Runnable {
         while(opMode.opModeIsActive()){
             if(right) {
                 carousel.setPower(-1);
+                carousel2.setPower(-1);
                 try {
                     Thread.sleep(2500);
                 } catch (InterruptedException e) {
@@ -48,6 +50,7 @@ public class Carousel implements Runnable {
             }
             if(left){
                 carousel.setPower(1);
+                carousel2.setPower(1);
                 try {
                     Thread.sleep(2500);
                 } catch (InterruptedException e) {

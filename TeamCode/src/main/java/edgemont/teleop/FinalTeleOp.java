@@ -13,8 +13,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import edgemont.auto.drive.Drive;
 import edgemont.lib.Carousel;
 import edgemont.lib.Grabber;
+import edgemont.lib.Ramp;
 import edgemont.lib.Slide;
 
 @TeleOp(name="Full Final TeleOp 2-23")
@@ -30,6 +32,7 @@ public class FinalTeleOp extends LinearOpMode {
     Slide slide;
     Carousel carousel;
     RevColorSensorV3 color;
+    Ramp ramp;
 
     BNO055IMU imu;
     Orientation lastAngles = new Orientation();
@@ -54,6 +57,8 @@ public class FinalTeleOp extends LinearOpMode {
         intake = hardwareMap.dcMotor.get("intake");
         intake.setDirection(DcMotor.Direction.FORWARD);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        ramp = new Ramp(hardwareMap);
         
         wheelLF = hardwareMap.dcMotor.get("wheelLF");
         wheelRF = hardwareMap.dcMotor.get("wheelRF");
@@ -77,7 +82,7 @@ public class FinalTeleOp extends LinearOpMode {
         }
 
         getAngle();
-        globalAngle = 0;
+        globalAngle = Drive.globalAngle;
 
         waitForStart();
 
@@ -217,7 +222,13 @@ public class FinalTeleOp extends LinearOpMode {
                 fieldCentric = !fieldCentric;
             }
             back1WasDown = gamepad1.back;
-            
+
+            if(gamepad2.right_bumper || gamepad1.right_bumper){
+                ramp.lift();
+            }else{
+                ramp.retract();
+            }
+
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = -Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4 + Math.PI;
             double rightX = -gamepad1.right_stick_x;
@@ -268,6 +279,7 @@ public class FinalTeleOp extends LinearOpMode {
         telemetry.addData("Controller 2 A button", "Red duck");
         telemetry.addData("Controller 2 B button", "Blue duck");
         telemetry.addData("Controller 1 Back", "Toggle field-centric");
+        telemetry.addData("C2 Right Bumper", "Lift ramp");
         telemetry.update();
     }
 

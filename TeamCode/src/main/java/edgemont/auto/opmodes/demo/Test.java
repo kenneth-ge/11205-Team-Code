@@ -9,21 +9,29 @@ import edgemont.auto.Intake;
 import edgemont.auto.cameravision.Camera;
 import edgemont.auto.cameravision.Pixel;
 import edgemont.auto.drive.Drive;
+import edgemont.lib.Grabber;
+import edgemont.lib.Slide;
 
 @Autonomous(name = "Test")
 public class Test extends LinearOpMode {
+
     Drive drive;
+    Slide slide;
+    Grabber grabber;
 
     public void runOpMode() throws InterruptedException {
         drive = new Drive(this);
+        grabber = new Grabber(hardwareMap);
+        slide = new Slide(hardwareMap, grabber);
+
+        grabber.grab();
 
         waitForStart(); //where the program starts
 
-        drive.turn(0.08);
-
-        //drive.drive(6);
-        //Thread.sleep(10000);
-        //drive.drive(-6, 0.8);
+        slide.setPos(753, true, 0.15);
+        grabber.release();
+        Thread.sleep(500);
+        slide.setPos(0, true, 0.15);
     }
 
     public void spinCarousel(CRServo servo, int time, double servopwr) throws InterruptedException {

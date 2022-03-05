@@ -9,14 +9,15 @@ public class Ramp {
 
     public Ramp(HardwareMap hardwareMap){
         this.ramp = hardwareMap.get(Servo.class, "ramp");
+        retract();
     }
 
     public void retract(){
-        ramp.setPosition(0.05);
+        ramp.setPosition(0.04);
     }
 
     public void lift(){
-        ramp.setPosition(0.5);
+        ramp.setPosition(0.4);
     }
 
 }

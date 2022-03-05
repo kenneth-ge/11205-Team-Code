@@ -25,7 +25,7 @@ public class Drive {
     
     BNO055IMU imu;
     Orientation lastAngles = new Orientation();
-    double globalAngle;
+    public static double globalAngle;
     
     LinearOpMode opMode;
     Telemetry telemetry;

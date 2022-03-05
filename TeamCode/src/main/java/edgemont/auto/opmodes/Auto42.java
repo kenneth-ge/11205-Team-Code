@@ -8,16 +8,18 @@ import edgemont.auto.cameravision.Camera;
 import edgemont.auto.drive.Drive;
 import edgemont.auto.cameravision.Pixel;
 import edgemont.lib.Grabber;
+import edgemont.lib.Ramp;
 import edgemont.lib.Slide;
 
-@Autonomous(name="Red Auto Hub Duck Shipping-hub-park 42pts")
-public class RedAuto42 extends LinearOpMode {
+@Autonomous(name="Auto Hub Duck Shipping-hub-park 42pts")
+public class Auto42 extends LinearOpMode {
 
     Drive drive;
     Grabber grabber;
     Camera camera;
     Slide slide;
-    DcMotor motor;
+    DcMotor motor, motor2;
+    Ramp ramp;
     double motorpwr = -1;
 
     public void runOpMode() throws InterruptedException {
@@ -28,91 +30,97 @@ public class RedAuto42 extends LinearOpMode {
         slide = new Slide(hardwareMap, grabber);
         drive = new Drive(this);
         motor = (DcMotor)hardwareMap.dcMotor.get("carousel");
+        motor2 = hardwareMap.dcMotor.get("reel");
+
+        ramp = new Ramp(hardwareMap);
 
         waitForStart(); //where the program starts
 
         drive.drive(-0.1);
-        drive.strafe(0.85);
+        drive.strafe(0.2);
 
         int region = scan(camera);
 
         switch(region){
             case 2: // middle -> middle
-                drive.strafe(-2);
+                drive.strafe(-1.1);
                 drive.drive(-0.5);
-                slide.setPos(4966, -5186, false, 1);
+                slide.setPos((int) (4966. / 11235. * Slide.MAX_SLIDE), false, 0.5);
                 drive.turn(-0.100);
                 drive.drive(-1);
-                drive.turn(0.08);
+                drive.turn(0.06);
                 grabber.release();
-                slide.setPos((int) (5214 * 1.1), (int) (-5445 * 1.1), false, 1);
-                drive.turn(-0.08);
+                slide.setPos((int) (5214 * 1.1 / 11235. * Slide.MAX_SLIDE), false, 0.5);
+                drive.turn(-0.06);
                 slide.waitForFinish();
                 grabber.looseGrab();
 
-                slide.setPos(0, 0, false, 0.4);
+                slide.setPos(0, false, 0.4);
 
                 drive.drive(0.8);
                 Thread.sleep(500);
+                drive.turnToAngle(0.25);
+                drive.drive(-3.75);
                 drive.turnToAngle(0.5);
-                drive.strafe(-4.35);
-                drive.drive(-1.05);
+                drive.drive(-0.4);
 
                 carousel();
 
                 drive.turnToAngle(0.5);
 
                 drive.drive(1.9);
-
                 break;
-            case 3: //right -> bottom
-                drive.strafe(-26./12. - 0.85, Drive.INFINITY, true, 0.25);
-                slide.setPos((int) (0.90 * 5333 * 0.5 * 0.90), (int) (-5160 * 0.90 * 0.5 * 90), false, 0.5);
-                drive.drive(-18./12. + 0.1);
-                drive.turn(-5/360.);
-                slide.setPos((int) (0.90 * 5333 * 0.90), (int) (-5160 * 0.90 * 0.90), true, 0.5);
-                drive.turn(5/360.);
+            case 1: //right -> bottom
+                slide.setPos(753, false, 0.15);
+                drive.strafe(-18.5/12. - 0.2, Drive.INFINITY, true, 0.25);
+                slide.waitForFinish();
                 grabber.release();
                 Thread.sleep(500);
                 grabber.looseGrab();
-                slide.setPos(0, 0, false, 0.3);
+                slide.setPos(0, false, 0.15);
+                drive.drive(-12./12. + 0.1);
+                slide.waitForFinish();
+                drive.drive(-0.55);
+
+                ramp.lift();
+                Thread.sleep(500);
+                ramp.retract();
+
+                drive.drive(-0.05);
                 drive.drive(0.1);
-                drive.turn(-0.5);
-                drive.turnToAngle(-0.5);
-                drive.drive(-0.85);
-                drive.strafe(-5, Drive.INFINITY, true, 0.5);
-                drive.drive(-0.60);
+                drive.drive(0.85);
+                drive.turnToAngle(0.25);
+                drive.drive(-4);
+                drive.strafe(0.225, 2500);
 
                 carousel();
 
                 drive.turnToAngle(0.25);
-                /*drive.drive(6, 1);
-                drive.strafe(0.8, Drive.INFINITY, true, 0.5);
-                drive.drive(2.5, 0.5);*/
-
-                /*drive.drive(1.8);
-                drive.turnToAngle(0.5);*/
+                drive.drive(5, 0.7);
+                drive.strafe(0.8);
+                drive.drive(4, 0.7);
                 break;
-            case 1:
+            case 3:
             default: //left -> top
-                /*drive.strafe(-2);
-                drive.drive(-0.5);
-                drive.turn(-0.100);
-                slide.setPos((int) (4966 * 1.3), (int) (-5186 * 1.3));
-                drive.turn(0.075);
+                slide.setPos(Slide.MAX_SLIDE, false, 0.5);
+                drive.strafe(0.4);
+                drive.turn(0.13);
+                slide.waitForFinish();
                 grabber.release();
                 Thread.sleep(500);
-                grabber.looseGrab();
-                drive.turn(-0.075);
-                slide.setPos(0, 0);*/
+                slide.setPos(Slide.MAX_SLIDE / 2, true, 0.5);
+                drive.turnToAngle(0);
+                slide.setPos(0, false, 0.5);
                 break;
         }
     }
 
     public void carousel() throws InterruptedException {
         motor.setPower(motorpwr);
+        motor2.setPower(motorpwr);
         Thread.sleep(3000);
         motor.setPower(0);
+        motor2.setPower(0);
     }
 
     public int scan(Camera camera) throws InterruptedException {

@@ -1,4 +1,4 @@
-package edgemont.auto.opmodes;
+package edgemont.auto.opmodes.old;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

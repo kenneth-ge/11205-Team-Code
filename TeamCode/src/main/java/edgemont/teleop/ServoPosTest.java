@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import edgemont.auto.drive.Drive;
 import edgemont.lib.Grabber;
 
 @TeleOp(name="Servo Pos Test")
@@ -18,17 +19,20 @@ public class ServoPosTest extends LinearOpMode {
         telemetry.addData("Controls", "Press A to toggle grabber");
         telemetry.update();
 
+        Drive.globalAngle = 180;
+
         waitForStart();
 
         long counter = System.currentTimeMillis();
         while(opModeIsActive()){
-            ramp.setPosition(gamepad1.left_stick_y);
+            ramp.setPosition(Math.max(0.03, gamepad1.left_stick_y));
 
             if(gamepad1.a && !wasGrabbing){
                 grabber.toggle();
             }
             wasGrabbing = gamepad1.a;
 
+            telemetry.addData("ramp pos", ramp.getPosition());
             telemetry.addData("pos", grabber.pos());
             telemetry.addData("time", (System.currentTimeMillis() - counter) / 1000);
             telemetry.update();

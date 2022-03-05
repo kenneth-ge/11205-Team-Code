@@ -1,10 +1,12 @@
 package edgemont.old;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import edgemont.auto.cameravision.Camera;
 
+@Disabled
 @Autonomous(name="Learned", group="Test")
 public class Learned extends LinearOpMode {
     
