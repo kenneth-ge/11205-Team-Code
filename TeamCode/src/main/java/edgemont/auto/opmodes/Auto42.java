@@ -37,13 +37,13 @@ public class Auto42 extends LinearOpMode {
         waitForStart(); //where the program starts
 
         drive.drive(-0.1);
-        drive.strafe(0.2);
+        drive.strafe(0.4);
 
         int region = scan(camera);
 
         switch(region){
             case 2: // middle -> middle
-                drive.strafe(-1.1);
+                drive.strafe(-1.3);
                 drive.drive(-0.5);
                 slide.setPos((int) (4966. / 11235. * Slide.MAX_SLIDE), false, 0.5);
                 drive.turn(-0.100);
@@ -72,7 +72,7 @@ public class Auto42 extends LinearOpMode {
                 break;
             case 1: //right -> bottom
                 slide.setPos(753, false, 0.15);
-                drive.strafe(-18.5/12. - 0.2, Drive.INFINITY, true, 0.25);
+                drive.strafe(-18.5/12., Drive.INFINITY, true, 0.25);
                 slide.waitForFinish();
                 grabber.release();
                 Thread.sleep(500);
@@ -102,9 +102,9 @@ public class Auto42 extends LinearOpMode {
                 break;
             case 3:
             default: //left -> top
-                slide.setPos(Slide.MAX_SLIDE, false, 0.5);
-                drive.strafe(0.4);
-                drive.turn(0.13);
+//                slide.setPos(Slide.MAX_SLIDE, false, 0.5);
+                drive.strafe(1.5);
+                drive.turn(-0.13);
                 slide.waitForFinish();
                 grabber.release();
                 Thread.sleep(500);

@@ -13,7 +13,7 @@ public class Ramp {
     }
 
     public void retract(){
-        ramp.setPosition(0.04);
+         ramp.setPosition(0.09);
     }
 
     public void lift(){

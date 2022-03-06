@@ -11,7 +11,7 @@ public class Slide {
 
     final double RATIO = 0.83;
     final double POWER = 0.3;
-    public static final int MAX_SLIDE = (int) (4400), MIN_SLIDE = 0;
+    public static final int MAX_SLIDE = (int) (4350), MIN_SLIDE = 0;
     public DcMotor slide;
     Grabber grabber;
 
@@ -33,7 +33,7 @@ public class Slide {
     }
 
     public void setPower(final double power){
-        if(power > 0 && slide.getCurrentPosition() < 1000){
+        if(power > 0 && slide.getCurrentPosition() < 1200 && slide.getCurrentPosition() > 250){
             if(!grabber.grabbing)
                 grabber.looseGrab();
         }

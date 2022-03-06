@@ -19,7 +19,7 @@ import edgemont.lib.Grabber;
 import edgemont.lib.Ramp;
 import edgemont.lib.Slide;
 
-@TeleOp(name="Full Final TeleOp 2-23")
+@TeleOp(name="Final TeleOp")
 
 public class FinalTeleOp extends LinearOpMode {
 
@@ -170,22 +170,22 @@ public class FinalTeleOp extends LinearOpMode {
                     intake.setPower(power);
             }
 
-            if(!gamepad2.dpad_up && upWasDown){
-                toggleRandom = !toggleRandom;
-
-                if(toggleRandom){
-                    slide.slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                }else{
-                    slide.slide.setTargetPosition(slide.slide.getCurrentPosition());
-
-                    slide.slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                }
-            }
-            upWasDown = gamepad2.dpad_up;
-
-            if(toggleRandom){
-                slide.slide.setPower(-gamepad2.left_stick_y);
-            }else{
+//            if(!gamepad2.dpad_up && upWasDown){
+//                toggleRandom = !toggleRandom;
+//
+//                if(toggleRandom){
+//                    slide.slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//                }else{
+//                    slide.slide.setTargetPosition(slide.slide.getCurrentPosition());
+//
+//                    slide.slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                }
+//            }
+//            upWasDown = gamepad2.dpad_up;
+//
+//            if(toggleRandom){
+//                slide.slide.setPower(-gamepad2.left_stick_y);
+//            }else{
                 if (gamepad1.dpad_up) {
                     slide.up();
                 } else if (gamepad1.dpad_down) {
@@ -197,7 +197,7 @@ public class FinalTeleOp extends LinearOpMode {
                         slide.stop();
                     }
                 }
-            }
+//            }
 
             if(gamepad2.a && !a2WasDown){
                 grabber.toggle();
