@@ -98,18 +98,6 @@ public class Drive {
 
     public void turnToZero() throws InterruptedException {
         turnToAngle(0);
-        /*double angle = getAngle();
-
-        while(globalAngle < 0){
-            globalAngle += 360;
-        }
-
-        globalAngle = globalAngle % 360;
-
-        telemetry.addData("angle", globalAngle);
-        telemetry.addData("rotations", -globalAngle / 360.);
-        telemetry.update();
-        turn(-globalAngle / 360.);*/
     }
     
     public double getAngle(){
